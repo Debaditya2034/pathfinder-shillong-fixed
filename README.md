@@ -58,7 +58,7 @@ To access different dashboards:
 
 - **Frontend**: React 18 + Vite + JavaScript
 - **Styling**: Tailwind CSS + shadcn/ui components
-- **Backend**: Firebase (Authentication, Firestore, Storage, Functions) - **NOTE: Removed in chore/remove-firebase-clean-slate branch**
+- **Backend**: Firebase (Authentication, Firestore, Storage, Functions)
 - **Routing**: React Router v6
 - **State**: React Query + localStorage (demo)
 - **Icons**: Lucide React
@@ -85,8 +85,6 @@ src/
 ```
 
 ## 🔧 Firebase Configuration
-
-**NOTE: Firebase removed in chore/remove-firebase-clean-slate branch — re-add when ready.**
 
 Firebase is optional. In demo mode the helpers store everything in `localStorage`, but if you want real OTP auth + Firestore writes:
 
@@ -171,8 +169,6 @@ For demo purposes, all features use simulated data stored in browser localStorag
 **Built with ❤️ for Meghalaya tourism**
 
 # Firebase test (client)
-**NOTE: Firebase removed in chore/remove-firebase-clean-slate branch — re-add when ready.**
-
 1. cp .env.example .env.local and fill your Firebase credentials (or leave blank to use local/demo fallback).
 2. npm install
 3. npm run dev

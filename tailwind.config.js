@@ -12,7 +12,9 @@ const config = {
     },
     extend: {
       colors: {
-        "pf-green": "#0f5a36",
+        "pf-green": "#0ea467",
+        "pf-dark": "#0b0f0c",
+        "pf-muted": "#191c1a",
         "pf-green-600": "#0d4c2d",
         "panel-bg": "#F7F5F2",
         border: "hsl(var(--border))",

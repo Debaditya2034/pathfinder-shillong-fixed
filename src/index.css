@@ -8,62 +8,65 @@ All colors MUST be HSL.
 
 @layer base {
   :root {
-    /* Black + Green Dark Theme */
-    --background: 0 0% 8%;
-    --foreground: 0 0% 98%;
+    --pf-bg: #0b0f0c;
+    --pf-accent: #0ea467;
+    --pf-muted: #191c1a;
+    
+    --background: 32 32% 95%;
+    --foreground: 154 32% 14%;
 
-    --card: 0 0% 12%;
-    --card-foreground: 0 0% 98%;
+    --card: 34 32% 92%;
+    --card-foreground: var(--foreground);
 
-    --popover: 0 0% 12%;
-    --popover-foreground: 0 0% 98%;
+    --popover: 34 34% 96%;
+    --popover-foreground: var(--foreground);
 
-    --primary: 151 71% 35%;
+    --primary: 151 71% 21%;
     --primary-foreground: 0 0% 100%;
 
-    --secondary: 151 30% 18%;
-    --secondary-foreground: 0 0% 98%;
+    --secondary: 36 28% 90%;
+    --secondary-foreground: 154 32% 18%;
 
-    --muted: 0 0% 16%;
-    --muted-foreground: 0 0% 65%;
+    --muted: 34 24% 88%;
+    --muted-foreground: 24 16% 36%;
 
-    --accent: 151 71% 45%;
-    --accent-foreground: 0 0% 100%;
+    --accent: 43 96% 59%;
+    --accent-foreground: 154 32% 14%;
 
     --destructive: 5 78% 56%;
     --destructive-foreground: 0 0% 100%;
 
-    --border: 0 0% 20%;
-    --input: 0 0% 20%;
-    --ring: 151 71% 35%;
+    --border: 32 22% 82%;
+    --input: var(--border);
+    --ring: var(--primary);
 
-    --success: 145 65% 45%;
-    --warning: 38 92% 52%;
-    --info: 217 91% 66%;
+    --success: 145 65% 40%;
+    --warning: 38 92% 50%;
+    --info: 217 91% 60%;
 
-    --panel: 0 0% 12%;
-    --panel-strong: 0 0% 16%;
+    --panel: 34 28% 94%;
+    --panel-strong: 27 28% 88%;
 
     --radius: 0.65rem;
 
-    --gradient-primary: linear-gradient(135deg, hsl(151 71% 35%), hsl(151 58% 42%));
+    --gradient-primary: linear-gradient(135deg, hsl(151 71% 21%), hsl(151 58% 32%));
     --gradient-hero: radial-gradient(circle at top, hsl(151 74% 14% / 0.95), hsl(151 58% 24% / 0.85));
-    --gradient-accent: linear-gradient(135deg, hsl(151 71% 45%), hsl(151 65% 38%));
-    --shadow-sm: 0 4px 12px hsl(0 0% 0% / 0.3);
-    --shadow-md: 0 12px 40px hsl(0 0% 0% / 0.4);
-    --shadow-lg: 0 25px 60px hsl(0 0% 0% / 0.5);
-    --shadow-xl: 0 45px 80px hsl(0 0% 0% / 0.6);
-    --shadow-glow: 0 0 32px hsl(151 71% 35% / 0.4);
-    --transition-smooth: all 0.3s cubic-bezier(0.22, 0.9, 0.3, 1);
+    --gradient-accent: linear-gradient(135deg, hsl(43 96% 59%), hsl(36 92% 52%));
+    --shadow-sm: 0 4px 12px hsl(151 71% 21% / 0.08);
+    --shadow-md: 0 12px 40px hsl(151 71% 21% / 0.12);
+    --shadow-lg: 0 25px 60px hsl(151 71% 21% / 0.15);
+    --shadow-xl: 0 45px 80px hsl(151 71% 21% / 0.2);
+    --shadow-glow: 0 0 32px hsl(43 96% 59% / 0.35);
+    --transition-smooth: all 0.2s cubic-bezier(0.22, 0.9, 0.3, 1);
 
-    --sidebar-background: 0 0% 10%;
-    --sidebar-foreground: 0 0% 98%;
-    --sidebar-primary: 151 71% 35%;
+    --sidebar-background: 36 28% 94%;
+    --sidebar-foreground: 156 32% 20%;
+    --sidebar-primary: 151 71% 22%;
     --sidebar-primary-foreground: 0 0% 100%;
-    --sidebar-accent: 0 0% 16%;
-    --sidebar-accent-foreground: 0 0% 98%;
-    --sidebar-border: 0 0% 20%;
-    --sidebar-ring: 151 71% 35%;
+    --sidebar-accent: 34 24% 90%;
+    --sidebar-accent-foreground: 156 32% 14%;
+    --sidebar-border: 34 20% 82%;
+    --sidebar-ring: 151 71% 26%;
   }
 
   .dark {
@@ -119,14 +122,17 @@ All colors MUST be HSL.
     @apply border-border;
   }
 
+  html, body, #root {
+    height: 100%;
+  }
+
   body {
     @apply text-foreground;
     font-family: "Inter", system-ui, -apple-system, sans-serif;
-    background-color: hsl(var(--background));
-    background-image:
-      radial-gradient(circle at 15% 20%, hsl(151 42% 25% / 0.15), transparent 45%),
-      radial-gradient(circle at 90% 0%, hsl(151 56% 22% / 0.2), transparent 35%),
-      linear-gradient(180deg, hsl(var(--background)), hsl(0 0% 10%));
+    background: var(--pf-bg);
+    color: #e6f2ef;
+    -webkit-font-smoothing: antialiased;
+    -moz-osx-font-smoothing: grayscale;
     min-height: 100vh;
   }
 
@@ -185,6 +191,15 @@ All colors MUST be HSL.
 
   .smooth-ease {
     transition-timing-function: cubic-bezier(0.22, 0.9, 0.3, 1);
+  }
+
+  .pf-btn {
+    @apply inline-flex items-center justify-center rounded-lg px-4 py-2 font-semibold transition-transform duration-150 ease-in-out;
+  }
+
+  .pf-focus:focus {
+    outline: 3px solid rgba(14, 164, 103, 0.18);
+    outline-offset: 2px;
   }
 }
 

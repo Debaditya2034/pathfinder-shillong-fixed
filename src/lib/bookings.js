@@ -1,20 +1,18 @@
 // REST-backed createBooking (demo mode) — put near top of src/lib/bookings.js
-// TODO: re-add firebase wiring - removed in chore/remove-firebase-clean-slate
-// import { auth, firebaseApp } from "../firebase"; // adjust if your firebase export names differ
+import { auth, firebaseApp } from "../firebase"; // adjust if your firebase export names differ
 
 function genCode() { return Math.floor(100000+Math.random()*900000).toString(); }
 
 export async function createBookingREST(payload = {}) {
   console.log('[bookings-rest] creating booking via REST', payload);
-  // Firebase removed - using localStorage fallback
-  // TODO: re-add firebase wiring - removed in chore/remove-firebase-clean-slate
-  console.warn('[bookings-rest] firebase not ready — falling back to local save');
-  const bk = { id:'local-'+Date.now(), ...payload, bookingCode: genCode(), status:'pending' };
-  const arr = JSON.parse(localStorage.getItem('pf_demo_bookings')||'[]'); arr.push(bk); localStorage.setItem('pf_demo_bookings', JSON.stringify(arr));
-  return { id: bk.id, bookingCode: bk.bookingCode, fallback: true };
+  // sanity
+  if (!auth || !firebaseApp) {
+    console.warn('[bookings-rest] firebase not ready — falling back to local save');
+    const bk = { id:'local-'+Date.now(), ...payload, bookingCode: genCode(), status:'pending' };
+    const arr = JSON.parse(localStorage.getItem('pf_demo_bookings')||'[]'); arr.push(bk); localStorage.setItem('pf_demo_bookings', JSON.stringify(arr));
+    return { id: bk.id, bookingCode: bk.bookingCode, fallback: true };
+  }
 
-  // TODO: re-add firebase wiring - removed in chore/remove-firebase-clean-slate
-  /*
   const user = auth.currentUser;
   if (!user) throw new Error('user-not-signed-in');
 
@@ -79,5 +77,4 @@ export async function createBookingREST(payload = {}) {
   const docId = parts[parts.length-1];
   console.log('[bookings-rest] created doc', docId, body);
   return { id: docId, bookingCode: bookingBase.bookingCode };
-  */
 }

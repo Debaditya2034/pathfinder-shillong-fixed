@@ -6,6 +6,7 @@ import { Navbar } from "@/components/Navbar";
 import { Users, Car, MapPin, IndianRupee, CheckCircle, X } from "lucide-react";
 import { formatCurrency } from "@/lib/utils";
 import { toast } from "sonner";
+import { computeAnalytics } from "@/lib/analytics";
 
 const AdminDashboard = () => {
   const navigate = useNavigate();
@@ -46,23 +47,18 @@ const AdminDashboard = () => {
 
     const pending = drivers.filter((driver) => driver.status === "pending");
     
-    // Calculate revenue from completed or accepted bookings
-    const revenue = bookings
-      .filter((booking) => booking.status === "completed" || booking.status === "accepted")
-      .reduce((sum, booking) => {
-        const cost = booking.estimatedCost || booking.total || booking.cost || 0;
-        return sum + (typeof cost === 'number' ? cost : 0);
-      }, 0);
-
-    // Count tourists from users or bookings
+    // Use analytics utility
+    const analytics = computeAnalytics(bookings);
+    
+    // Count tourists
     const touristCount = users.filter((u) => u.role === "tourist").length || 
       new Set(bookings.map((b) => b.touristId).filter(Boolean)).size;
 
     setStats({
-      totalBookings: bookings.length || 0,
+      totalBookings: analytics.totalBookings || 0,
       totalDrivers: drivers.length || 0,
       pendingDrivers: pending.length || 0,
-      totalRevenue: revenue || 0,
+      totalRevenue: analytics.totalEarnings || 0,
       totalTourists: touristCount || 0,
     });
 
@@ -147,7 +143,7 @@ const AdminDashboard = () => {
               <div className="flex items-center justify-between">
                 <div>
                   <p className="text-sm text-muted-foreground">Total Earnings</p>
-                  <p className="text-3xl font-bold">{formatCurrency(stats.totalRevenue || 0)}</p>
+                  <p className="text-3xl font-bold">₹{stats.totalRevenue.toLocaleString('en-IN') || 0}</p>
                 </div>
                 <IndianRupee className="h-8 w-8 text-success" aria-hidden="true" />
               </div>

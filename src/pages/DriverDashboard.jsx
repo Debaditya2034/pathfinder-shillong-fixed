@@ -35,25 +35,15 @@ const DriverDashboard = () => {
     const driverBookings = allBookings.filter((booking) => booking.status === "pending" || booking.driverId === driverId);
     setBookings(driverBookings);
 
-    // Count accepted bookings (trips accepted)
-    const accepted = driverBookings.filter((booking) => booking.status === "accepted" || booking.status === "completed").length;
-    const completed = driverBookings.filter((booking) => booking.status === "completed").length;
-    const pending = driverBookings.filter((booking) => booking.status === "pending").length;
-    
-    // Calculate earnings from completed or accepted bookings
-    const earnings = driverBookings
-      .filter((booking) => booking.status === "completed" || booking.status === "accepted")
-      .reduce((sum, booking) => {
-        const cost = booking.estimatedCost || booking.total || booking.cost || 0;
-        return sum + (typeof cost === 'number' ? cost : 0);
-      }, 0);
+    // Use analytics utility
+    const analytics = computeDriverAnalytics(allBookings, driverId);
 
     setStats({
-      total: driverBookings.length || 0,
-      accepted: accepted || 0,
-      completed: completed || 0,
-      pending: pending || 0,
-      earnings: earnings || 0,
+      total: analytics.total || 0,
+      accepted: analytics.accepted || 0,
+      completed: analytics.completed || 0,
+      pending: analytics.pending || 0,
+      earnings: analytics.earnings || 0,
     });
   };
 
@@ -136,7 +126,7 @@ const DriverDashboard = () => {
               <div className="flex items-center justify-between">
                 <div>
                   <p className="text-sm text-muted-foreground">Total Earnings</p>
-                  <p className="text-3xl font-bold">{formatCurrency(stats.earnings || 0)}</p>
+                  <p className="text-3xl font-bold">₹{stats.earnings.toLocaleString('en-IN') || 0}</p>
                 </div>
                 <IndianRupee className="h-8 w-8 text-success" aria-hidden="true" />
               </div>

@@ -47,7 +47,7 @@ To access different dashboards:
 
 ## 🛠️ Tech Stack
 
-- **Frontend**: React 18 + Vite + TypeScript
+- **Frontend**: React 18 + Vite + JavaScript
 - **Styling**: Tailwind CSS + shadcn/ui components
 - **Backend**: Firebase (Authentication, Firestore, Storage, Functions)
 - **Routing**: React Router v6
@@ -59,20 +59,20 @@ To access different dashboards:
 
 ```
 src/
-├── assets/           # Images and static files
-├── components/       # Reusable UI components
-│   ├── ui/          # shadcn/ui components
-│   └── Navbar.tsx   # Main navigation
-├── lib/             # Utilities and Firebase config
-├── pages/           # Route pages
-│   ├── Index.tsx           # Homepage
-│   ├── Auth.tsx            # Login/Signup
-│   ├── Itinerary.tsx       # Trip planner
-│   ├── BookingConfirm.tsx  # Booking confirmation
-│   ├── DriverDashboard.tsx # Driver interface
-│   └── AdminDashboard.tsx  # Admin panel
-├── types/           # TypeScript definitions
-└── App.tsx          # Main app with routing
+├── assets/            # Images and static files
+├── components/        # Reusable UI components
+│   ├── ui/            # shadcn/ui components
+│   └── Navbar.jsx     # Main navigation
+├── lib/               # Utilities and Firebase config
+├── pages/             # Route pages
+│   ├── Index.jsx            # Homepage
+│   ├── Auth.jsx             # Login/Signup
+│   ├── Itinerary.jsx        # Trip planner
+│   ├── BookingConfirm.jsx   # Booking confirmation
+│   ├── DriverDashboard.jsx  # Driver interface
+│   └── AdminDashboard.jsx   # Admin panel
+├── data/              # Local demo data
+└── App.jsx            # Main app with routing
 ```
 
 ## 🔧 Firebase Configuration
@@ -82,16 +82,16 @@ To connect to real Firebase:
 1. Create a Firebase project at https://console.firebase.google.com
 2. Enable Authentication (Email + Phone)
 3. Create Firestore database
-4. Update `src/lib/firebase.ts` with your config:
+4. Update `src/lib/firebase-config.js` with your config:
 
-```typescript
-const firebaseConfig = {
+```js
+export const firebaseConfig = {
   apiKey: "YOUR_API_KEY",
   authDomain: "YOUR_PROJECT.firebaseapp.com",
   projectId: "YOUR_PROJECT_ID",
   storageBucket: "YOUR_PROJECT.appspot.com",
   messagingSenderId: "YOUR_SENDER_ID",
-  appId: "YOUR_APP_ID"
+  appId: "YOUR_APP_ID",
 };
 ```
 
@@ -127,7 +127,7 @@ The app uses a nature-inspired color scheme reflecting Meghalaya:
 - **Accent**: Earth tone yellow
 - **Gradients**: Smooth transitions between nature colors
 
-All colors are HSL-based and fully customizable in `src/index.css` and `tailwind.config.ts`.
+All colors are HSL-based and fully customizable in `src/index.css` and `tailwind.config.js`.
 
 ## 📦 Deployment
 

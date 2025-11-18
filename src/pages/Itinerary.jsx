@@ -93,19 +93,20 @@ const Itinerary = () => {
   };
 
   return (
-    <div className="min-h-screen bg-background">
+    <div className="min-h-screen bg-[#0b0f0c]">
       <Navbar />
       
-      <div className="container mx-auto px-4 py-24">
-        <h1 className="text-4xl font-bold mb-8 text-center">Plan Your Itinerary</h1>
+      <main className="min-h-screen bg-[#0f1412] text-[#e8f6ef] p-4 md:p-8">
+        <div className="max-w-5xl mx-auto bg-[#14221c] border border-[#1d3a2f] rounded-xl p-6">
+          <h1 className="text-4xl font-bold mb-8 text-center text-[#e3f5ec]">Plan Your Itinerary</h1>
         
         <div className="grid lg:grid-cols-2 gap-8">
           {/* Popular Locations */}
           <div>
-            <Card>
+            <Card className="bg-[#14221c] border border-[#1d3a2f]">
               <CardHeader>
-                <CardTitle className="flex items-center gap-2">
-                  <MapPin className="h-5 w-5" />
+                <CardTitle className="flex items-center gap-2 text-[#e3f5ec]">
+                  <MapPin className="h-5 w-5" aria-hidden="true" />
                   Popular Locations
                 </CardTitle>
               </CardHeader>
@@ -114,15 +115,15 @@ const Itinerary = () => {
                   {popularLocations.map((location) => (
                     <div
                       key={location.id}
-                      className="flex items-center justify-between p-3 rounded-lg border hover:border-primary transition-colors cursor-pointer"
+                      className="flex items-center justify-between p-3 rounded-lg border border-[#1d3a2f] bg-[#0f1412] hover:border-pf-green transition-colors cursor-pointer"
                       onClick={() => addStop(location)}
                     >
                       <div>
-                        <p className="font-medium">{location.name}</p>
-                        <p className="text-sm text-muted-foreground">{location.description}</p>
+                        <p className="font-medium text-[#e3f5ec]">{location.name}</p>
+                        <p className="text-sm text-[#d9efe6]">{location.description}</p>
                       </div>
-                      <Button size="sm" variant="ghost">
-                        <Plus className="h-4 w-4" />
+                      <Button size="sm" variant="ghost" className="text-pf-green hover:text-[#12c77c]">
+                        <Plus className="h-4 w-4" aria-hidden="true" />
                       </Button>
                     </div>
                   ))}
@@ -133,13 +134,13 @@ const Itinerary = () => {
 
           {/* Itinerary Builder */}
           <div className="space-y-6">
-            <Card>
+            <Card className="bg-[#14221c] border border-[#1d3a2f]">
               <CardHeader>
-                <CardTitle>Your Route ({selectedStops.length} stops)</CardTitle>
+                <CardTitle className="text-[#e3f5ec]">Your Route ({selectedStops.length} stops)</CardTitle>
               </CardHeader>
               <CardContent>
                 {selectedStops.length === 0 ? (
-                  <p className="text-muted-foreground text-center py-8">
+                  <p className="text-[#d9efe6] text-center py-8">
                     Select locations to build your itinerary
                   </p>
                 ) : (
@@ -147,20 +148,21 @@ const Itinerary = () => {
                     {selectedStops.map((stop, index) => (
                       <div
                         key={index}
-                        className="flex items-center gap-3 p-3 rounded-lg bg-secondary/30"
+                        className="flex items-center gap-3 p-3 rounded-lg bg-[#0f1412] border border-[#1d3a2f]"
                       >
-                        <div className="flex-shrink-0 w-8 h-8 rounded-full bg-primary text-primary-foreground flex items-center justify-center font-semibold">
+                        <div className="flex-shrink-0 w-8 h-8 rounded-full bg-pf-green text-black flex items-center justify-center font-semibold">
                           {index + 1}
                         </div>
                         <div className="flex-grow">
-                          <p className="font-medium">{stop.name}</p>
+                          <p className="font-medium text-[#e3f5ec]">{stop.name}</p>
                         </div>
                         <Button
                           size="sm"
                           variant="ghost"
                           onClick={() => removeStop(index)}
+                          className="text-pf-green hover:text-[#12c77c]"
                         >
-                          <X className="h-4 w-4" />
+                          <X className="h-4 w-4" aria-hidden="true" />
                         </Button>
                       </div>
                     ))}
@@ -171,13 +173,13 @@ const Itinerary = () => {
 
             {selectedStops.length >= 2 && (
               <>
-                <Card>
+                <Card className="bg-[#14221c] border border-[#1d3a2f]">
                   <CardHeader>
-                    <CardTitle>Trip Details</CardTitle>
+                    <CardTitle className="text-[#e3f5ec]">Trip Details</CardTitle>
                   </CardHeader>
                   <CardContent className="space-y-4">
                     <div>
-                      <Label htmlFor="vehicle">Vehicle Type</Label>
+                      <Label htmlFor="vehicle" className="text-[#e3f5ec]">Vehicle Type</Label>
                       <select
                         id="vehicle"
                         value={vehicleType}
@@ -186,7 +188,7 @@ const Itinerary = () => {
                           setVehicleType(nextType);
                           calculateRoute(selectedStops, nextType);
                         }}
-                        className="w-full mt-2 px-3 py-2 rounded-md border border-input bg-background"
+                        className="w-full mt-2 px-3 py-2 rounded-md border border-[#1d3a2f] bg-[#0f1412] text-[#e8f6ef]"
                       >
                         <option value="sedan">Sedan (4 seater)</option>
                         <option value="suv">SUV (7 seater)</option>
@@ -195,35 +197,35 @@ const Itinerary = () => {
                     </div>
                     
                     <div>
-                      <Label htmlFor="date">Scheduled Date</Label>
+                      <Label htmlFor="date" className="text-[#e3f5ec]">Scheduled Date</Label>
                       <Input
                         id="date"
                         type="date"
                         value={scheduledDate}
                         onChange={(e) => setScheduledDate(e.target.value)}
                         min={new Date().toISOString().split('T')[0]}
-                        className="mt-2"
+                        className="mt-2 bg-[#0f1412] border-[#1d3a2f] text-[#e8f6ef]"
                       />
                     </div>
                   </CardContent>
                 </Card>
 
-                <Card className="bg-gradient-to-br from-primary/5 to-secondary/10">
+                <Card className="bg-[#14221c] border border-[#1d3a2f]">
                   <CardContent className="pt-6 space-y-4">
                     <div className="flex justify-between items-center">
-                      <span className="text-muted-foreground">Total Distance</span>
-                      <span className="text-2xl font-bold">{totalDistance} km</span>
+                      <span className="text-[#d9efe6]">Total Distance</span>
+                      <span className="text-2xl font-bold text-[#e3f5ec]">{totalDistance} km</span>
                     </div>
                     <div className="flex justify-between items-center">
-                      <span className="text-muted-foreground">Estimated Cost</span>
-                      <span className="text-2xl font-bold text-primary">
+                      <span className="text-[#d9efe6]">Estimated Cost</span>
+                      <span className="text-2xl font-bold text-pf-green">
                         {formatCurrency(estimatedCost)}
                       </span>
                     </div>
-                    <p className="text-xs text-muted-foreground">
+                    <p className="text-xs text-[#d9efe6]">
                       *Includes fuel, driver charges, and estimated time costs
                     </p>
-                    <Button className="w-full" size="lg" onClick={handleBooking}>
+                    <Button className="w-full bg-pf-green text-black hover:bg-[#12c77c]" size="lg" onClick={handleBooking}>
                       Confirm Booking
                     </Button>
                   </CardContent>
@@ -232,7 +234,8 @@ const Itinerary = () => {
             )}
           </div>
         </div>
-      </div>
+        </div>
+      </main>
     </div>
   );
 };

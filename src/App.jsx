@@ -10,6 +10,7 @@ import Itinerary from "./pages/Itinerary";
 import BookingConfirm from "./pages/BookingConfirm";
 import DriverDashboard from "./pages/DriverDashboard";
 import AdminDashboard from "./pages/AdminDashboard";
+import RideBoard from "./pages/RideBoard";
 import NotFound from "./pages/NotFound";
 
 const queryClient = new QueryClient();
@@ -25,6 +26,7 @@ const App = () => (
           <Route path="/auth" element={<Auth />} />
           <Route path="/about" element={<About />} />
           <Route path="/itinerary" element={<Itinerary />} />
+          <Route path="/ride-board" element={<RideBoard />} />
           <Route path="/booking/confirm" element={<BookingConfirm />} />
           <Route path="/driver" element={<DriverDashboard />} />
           <Route path="/admin" element={<AdminDashboard />} />

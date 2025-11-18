@@ -1,5 +1,5 @@
 import { useState } from "react";
-import { Link } from "react-router-dom";
+import { Link, useNavigate } from "react-router-dom";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent } from "@/components/ui/card";
 import { MapPin, Car, Shield, Star, ChevronRight, Sparkles, Compass, Clock3 } from "lucide-react";
@@ -75,6 +75,7 @@ const journeySteps = [
 ];
 
 const Index = () => {
+  const navigate = useNavigate();
   const [selectedCategory, setSelectedCategory] = useState("all");
 
   const getCurrentUser = () => {
@@ -106,15 +107,18 @@ const Index = () => {
       <Navbar />
 
       <main role="main">
-        <section aria-label="Hero" className="relative mt-16 overflow-hidden">
-          <div className="absolute inset-0">
-            <img src={heroImage} alt="Shillong landscape" className="w-full h-64 md:h-96 object-cover" />
-            <div className="absolute inset-0 pointer-events-none" aria-hidden="true">
-              <div className="h-full w-full" style={{background: 'linear-gradient(180deg, rgba(11,15,12,0.0) 10%, rgba(11,15,12,0.6) 90%)'}} />
-            </div>
+        <section aria-label="Hero" className="relative">
+          <div className="w-full h-[420px] md:h-[680px] lg:h-[820px] overflow-hidden relative">
+            <img
+              src={heroImage}
+              alt="Shillong landscape"
+              className="w-full h-full object-cover object-center scale-105"
+            />
+            <div className="absolute inset-0 pointer-events-none" 
+                 style={{background:'linear-gradient(180deg, rgba(11,15,12,0.05) 8%, rgba(11,15,12,0.6) 85%)'}}/>
           </div>
 
-          <div className="relative z-10 container mx-auto px-4 md:px-8 py-12 md:py-20">
+          <div className="absolute inset-0 z-10 container mx-auto px-4 md:px-8 py-12 md:py-20">
             <div className="grid items-center gap-10 lg:grid-cols-[minmax(0,1fr)_420px]">
               <div className="text-white">
                 <Badge variant="demo" className="mb-5 bg-white/10 text-white backdrop-blur">
@@ -180,12 +184,14 @@ const Index = () => {
               </div>
 
               <div className="rounded-[32px] p-8 shadow-xl bg-[#14221c] border border-[#1d3a2f]">
-                <div className="mb-6 flex items-center justify-between">
-                  <div className="flex-1 min-w-0">
-                    <p className="text-sm text-[#d9efe6]">Next departure</p>
-                    <p className="text-2xl font-semibold text-[#e3f5ec] whitespace-normal break-words">Skyfall Loop</p>
-                  </div>
-                  <Badge variant="driver" className="ml-2 flex-shrink-0">demo</Badge>
+                <div className="bg-[#14221c] border border-[#1d3a2f] rounded-lg p-4 min-h-[120px] mb-6">
+                  <h3 className="text-sm font-semibold text-[#e3f5ec]">Next Departure</h3>
+                  <p className="mt-1 text-sm leading-relaxed whitespace-normal break-words text-[#d9efe6]">Route: Shillong → Cherrapunji</p>
+                  <p className="text-xs text-[#d9efe6] mt-2">Departure: 08:30 AM</p>
+                  <p className="text-xs text-[#d9efe6]">Seats left: 3</p>
+                  <button onClick={() => navigate('/ride-board')} className="pf-btn mt-3 bg-pf-green text-black hover:bg-[#12c77c]">
+                    View ride board
+                  </button>
                 </div>
 
                 <div className="space-y-4">

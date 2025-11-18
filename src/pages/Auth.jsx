@@ -20,8 +20,33 @@ const Auth = () => {
   const [role, setRole] = useState("tourist");
   const [loading, setLoading] = useState(false);
 
+  const validateAdminInputs = () => {
+    if (mode !== "signup" || role !== "admin") return true;
+
+    const errors = [];
+    const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+    if (!emailRegex.test(email)) {
+      errors.push("Enter a valid admin email.");
+    }
+    if (!/^\d{10}$/.test(phone)) {
+      errors.push("Admin phone number must be exactly 10 digits.");
+    }
+    if (password.length !== 10) {
+      errors.push("Admin password must be exactly 10 characters.");
+    }
+
+    if (errors.length) {
+      toast.error(errors[0]);
+      return false;
+    }
+    return true;
+  };
+
   const handleSubmit = async (e) => {
     e.preventDefault();
+    if (!validateAdminInputs()) {
+      return;
+    }
     setLoading(true);
 
     // Demo mode - simulate authentication
@@ -119,10 +144,14 @@ const Auth = () => {
                     id="signup-phone"
                     type="tel"
                     placeholder="+91 9876543210"
+                    inputMode="numeric"
+                    maxLength={role === "admin" ? 10 : undefined}
+                    pattern="\d*"
                     value={phone}
-                    onChange={(e) => setPhone(e.target.value)}
+                    onChange={(e) => setPhone(e.target.value.replace(/\D/g, ""))}
                     required
                   />
+                  {role === "admin" && <p className="text-xs text-muted-foreground">Admin numbers must be exactly 10 digits.</p>}
                 </div>
                 <div className="space-y-2">
                   <Label htmlFor="signup-password">Password</Label>
@@ -130,10 +159,12 @@ const Auth = () => {
                     id="signup-password"
                     type="password"
                     placeholder="••••••••"
+                    maxLength={role === "admin" ? 10 : undefined}
                     value={password}
                     onChange={(e) => setPassword(e.target.value)}
                     required
                   />
+                  {role === "admin" && <p className="text-xs text-muted-foreground">Admin password must be exactly 10 characters.</p>}
                 </div>
                 <div className="space-y-2">
                   <Label htmlFor="role">I am a</Label>

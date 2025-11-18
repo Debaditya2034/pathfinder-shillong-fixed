@@ -11,6 +11,15 @@ npm run dev
 
 The app will be available at `http://localhost:8080`
 
+## 🧪 Quick Checks
+
+Run these before opening a PR or deploying:
+
+```bash
+npm run lint
+npm run build
+```
+
 ## 🎯 Demo Mode Features
 
 This is a **DEMO VERSION** with the following capabilities:
@@ -49,7 +58,7 @@ To access different dashboards:
 
 - **Frontend**: React 18 + Vite + JavaScript
 - **Styling**: Tailwind CSS + shadcn/ui components
-- **Backend**: Firebase (Authentication, Firestore, Storage, Functions)
+- **Backend**: Firebase (Authentication, Firestore, Storage, Functions) - **NOTE: Removed in chore/remove-firebase-clean-slate branch**
 - **Routing**: React Router v6
 - **State**: React Query + localStorage (demo)
 - **Icons**: Lucide React
@@ -77,23 +86,23 @@ src/
 
 ## 🔧 Firebase Configuration
 
-To connect to real Firebase:
+**NOTE: Firebase removed in chore/remove-firebase-clean-slate branch — re-add when ready.**
 
-1. Create a Firebase project at https://console.firebase.google.com
-2. Enable Authentication (Email + Phone)
-3. Create Firestore database
-4. Update `src/lib/firebase-config.js` with your config:
+Firebase is optional. In demo mode the helpers store everything in `localStorage`, but if you want real OTP auth + Firestore writes:
 
-```js
-export const firebaseConfig = {
-  apiKey: "YOUR_API_KEY",
-  authDomain: "YOUR_PROJECT.firebaseapp.com",
-  projectId: "YOUR_PROJECT_ID",
-  storageBucket: "YOUR_PROJECT.appspot.com",
-  messagingSenderId: "YOUR_SENDER_ID",
-  appId: "YOUR_APP_ID",
-};
+1. Create a Firebase project and enable **Auth (Phone/OTP)**, **Firestore**, and **Storage**.
+2. Create a `.env` (or `.env.local`) file in the project root with:
+
+```bash
+VITE_FIREBASE_API_KEY="xxx"
+VITE_FIREBASE_AUTH_DOMAIN="xxx.firebaseapp.com"
+VITE_FIREBASE_PROJECT_ID="xxx"
+VITE_FIREBASE_STORAGE_BUCKET="xxx.appspot.com"
+VITE_FIREBASE_MESSAGING_SENDER_ID="0000000"
+VITE_FIREBASE_APP_ID="1:0000000:web:abcdef"
 ```
+
+3. Restart `npm run dev`. The new `src/firebase.js` loader will detect the env vars and initialize Firebase; otherwise it will log `Firebase not initialized — running in local/demo mode.` and all helpers (`src/lib/bookings.js`, `src/lib/users.js`) will keep using `localStorage`.
 
 ## 📱 Key Features Implemented
 
@@ -160,3 +169,14 @@ For demo purposes, all features use simulated data stored in browser localStorag
 ---
 
 **Built with ❤️ for Meghalaya tourism**
+
+# Firebase test (client)
+**NOTE: Firebase removed in chore/remove-firebase-clean-slate branch — re-add when ready.**
+
+1. cp .env.example .env.local and fill your Firebase credentials (or leave blank to use local/demo fallback).
+2. npm install
+3. npm run dev
+4. In browser console (after app loads), run:
+   import { createBooking } from '/src/lib/bookings.js'
+   createBooking({ touristId: 'demo', stops:[{name:'Dawki',lat:25.17,lng:92.3}], estimate:{distance_km:12,total:500}, vehicle:'SUV', scheduledAt: new Date().toISOString(), phone:'+919876543210' }).then(console.log)
+5. If Firestore is configured you will see the doc in the console and in Firestore. Otherwise it will be saved to localStorage under key `pf_demo_bookings`.

@@ -66,10 +66,13 @@ export const Navbar = ({ user, onLogout }) => {
           </Link>
 
           <div className="hidden md:flex items-center gap-6">
-            <Link to="/" className="text-foreground/80 hover:text-foreground transition-colors">
+            <Link to="/" className="text-foreground/80 hover:text-foreground transition-colors" aria-label="Home">
               Home
             </Link>
-            <Link to="/itinerary" className="text-foreground/80 hover:text-foreground transition-colors">
+            <Link to="/about" className="text-foreground/80 hover:text-foreground transition-colors" aria-label="About">
+              About
+            </Link>
+            <Link to="/itinerary" className="text-foreground/80 hover:text-foreground transition-colors" aria-label="Plan Trip">
               Plan Trip
             </Link>
             {renderAuthButtons()}
@@ -82,10 +85,13 @@ export const Navbar = ({ user, onLogout }) => {
 
         {mobileMenuOpen && (
           <div className="md:hidden py-4 flex flex-col gap-4">
-            <Link to="/" onClick={() => setMobileMenuOpen(false)} className="text-foreground/80 hover:text-foreground transition-colors">
+            <Link to="/" onClick={() => setMobileMenuOpen(false)} className="text-foreground/80 hover:text-foreground transition-colors" aria-label="Home">
               Home
             </Link>
-            <Link to="/itinerary" onClick={() => setMobileMenuOpen(false)} className="text-foreground/80 hover:text-foreground transition-colors">
+            <Link to="/about" onClick={() => setMobileMenuOpen(false)} className="text-foreground/80 hover:text-foreground transition-colors" aria-label="About">
+              About
+            </Link>
+            <Link to="/itinerary" onClick={() => setMobileMenuOpen(false)} className="text-foreground/80 hover:text-foreground transition-colors" aria-label="Plan Trip">
               Plan Trip
             </Link>
             {renderAuthButtons("mobile")}

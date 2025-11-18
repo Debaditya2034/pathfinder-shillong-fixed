@@ -67,6 +67,9 @@ const Auth = () => {
         navigate("/driver");
       } else if (role === "admin") {
         navigate("/admin");
+      } else if (role === "tourist") {
+        // Tourist can go to itinerary or home
+        navigate("/itinerary");
       } else {
         navigate("/");
       }
@@ -76,15 +79,15 @@ const Auth = () => {
 
   return (
     <div className="min-h-screen flex items-center justify-center bg-gradient-to-br from-primary/5 via-background to-secondary/10 p-4">
-      <Card className="w-full max-w-md shadow-xl">
+      <Card className="w-full max-w-md shadow-xl" role="main" aria-label="Authentication">
         <CardHeader className="text-center">
           <div className="flex justify-center mb-4">
-            <Link to="/">
-              <Mountain className="h-12 w-12 text-primary" />
+            <Link to="/" aria-label="Go to homepage">
+              <Mountain className="h-12 w-12 text-primary" aria-hidden="true" />
             </Link>
           </div>
-          <CardTitle className="text-2xl">PathFinder Shillong</CardTitle>
-          <CardDescription>
+          <CardTitle className="text-2xl md:text-3xl">PathFinder Shillong</CardTitle>
+          <CardDescription className="text-base">
             {mode === "login" ? "Welcome back!" : "Create your account"}
           </CardDescription>
         </CardHeader>
@@ -96,7 +99,7 @@ const Auth = () => {
             </TabsList>
             
             <TabsContent value="login">
-              <form onSubmit={handleSubmit} className="space-y-4">
+              <form onSubmit={handleSubmit} className="space-y-4" aria-label="Login form">
                 <div className="space-y-2">
                   <Label htmlFor="email">Email</Label>
                   <Input
@@ -106,6 +109,9 @@ const Auth = () => {
                     value={email}
                     onChange={(e) => setEmail(e.target.value)}
                     required
+                    aria-required="true"
+                    autoComplete="email"
+                    className="min-h-[48px]"
                   />
                 </div>
                 <div className="space-y-2">
@@ -117,16 +123,19 @@ const Auth = () => {
                     value={password}
                     onChange={(e) => setPassword(e.target.value)}
                     required
+                    aria-required="true"
+                    autoComplete="current-password"
+                    className="min-h-[48px]"
                   />
                 </div>
-                <Button type="submit" className="w-full" disabled={loading}>
+                <Button type="submit" className="w-full min-h-[48px] transition-all hover:scale-105 active:scale-95" disabled={loading} aria-label={loading ? "Logging in" : "Login"}>
                   {loading ? "Logging in..." : "Login"}
                 </Button>
               </form>
             </TabsContent>
             
             <TabsContent value="signup">
-              <form onSubmit={handleSubmit} className="space-y-4">
+              <form onSubmit={handleSubmit} className="space-y-4" aria-label="Sign up form">
                 <div className="space-y-2">
                   <Label htmlFor="signup-email">Email</Label>
                   <Input
@@ -136,6 +145,9 @@ const Auth = () => {
                     value={email}
                     onChange={(e) => setEmail(e.target.value)}
                     required
+                    aria-required="true"
+                    autoComplete="email"
+                    className="min-h-[48px]"
                   />
                 </div>
                 <div className="space-y-2">
@@ -150,8 +162,11 @@ const Auth = () => {
                     value={phone}
                     onChange={(e) => setPhone(e.target.value.replace(/\D/g, ""))}
                     required
+                    aria-required="true"
+                    autoComplete="tel"
+                    className="min-h-[48px]"
                   />
-                  {role === "admin" && <p className="text-xs text-muted-foreground">Admin numbers must be exactly 10 digits.</p>}
+                  {role === "admin" && <p className="text-xs text-muted-foreground" role="note">Admin numbers must be exactly 10 digits.</p>}
                 </div>
                 <div className="space-y-2">
                   <Label htmlFor="signup-password">Password</Label>
@@ -163,18 +178,27 @@ const Auth = () => {
                     value={password}
                     onChange={(e) => setPassword(e.target.value)}
                     required
+                    aria-required="true"
+                    autoComplete="new-password"
+                    className="min-h-[48px]"
                   />
-                  {role === "admin" && <p className="text-xs text-muted-foreground">Admin password must be exactly 10 characters.</p>}
+                  {role === "admin" && <p className="text-xs text-muted-foreground" role="note">Admin password must be exactly 10 characters.</p>}
                 </div>
                 <div className="space-y-2">
                   <Label htmlFor="role">I am a</Label>
-                  <select id="role" value={role} onChange={(e) => setRole(e.target.value)} className="w-full px-3 py-2 rounded-md border border-input bg-background">
+                  <select 
+                    id="role" 
+                    value={role} 
+                    onChange={(e) => setRole(e.target.value)} 
+                    className="w-full px-3 py-2 rounded-md border border-input bg-background min-h-[48px]"
+                    aria-label="Select your role"
+                  >
                     <option value="tourist">Tourist</option>
                     <option value="driver">Driver/Guide</option>
                     <option value="admin">Admin</option>
                   </select>
                 </div>
-                <Button type="submit" className="w-full" disabled={loading}>
+                <Button type="submit" className="w-full min-h-[48px] transition-all hover:scale-105 active:scale-95" disabled={loading} aria-label={loading ? "Creating account" : "Sign up"}>
                   {loading ? "Creating account..." : "Sign Up"}
                 </Button>
               </form>

@@ -15,6 +15,7 @@ const AdminDashboard = () => {
     totalDrivers: 0,
     pendingDrivers: 0,
     totalRevenue: 0,
+    totalTourists: 0,
   });
   const [pendingDrivers, setPendingDrivers] = useState([]);
   const [allBookings, setAllBookings] = useState([]);
@@ -41,15 +42,28 @@ const AdminDashboard = () => {
   const loadData = () => {
     const bookings = JSON.parse(localStorage.getItem("pathfinder_bookings") || "[]");
     const drivers = JSON.parse(localStorage.getItem("pathfinder_drivers") || "[]");
+    const users = JSON.parse(localStorage.getItem("pathfinder_users") || "[]");
 
     const pending = drivers.filter((driver) => driver.status === "pending");
-    const revenue = bookings.filter((booking) => booking.status === "completed").reduce((sum, booking) => sum + booking.estimatedCost, 0);
+    
+    // Calculate revenue from completed or accepted bookings
+    const revenue = bookings
+      .filter((booking) => booking.status === "completed" || booking.status === "accepted")
+      .reduce((sum, booking) => {
+        const cost = booking.estimatedCost || booking.total || booking.cost || 0;
+        return sum + (typeof cost === 'number' ? cost : 0);
+      }, 0);
+
+    // Count tourists from users or bookings
+    const touristCount = users.filter((u) => u.role === "tourist").length || 
+      new Set(bookings.map((b) => b.touristId).filter(Boolean)).size;
 
     setStats({
-      totalBookings: bookings.length,
-      totalDrivers: drivers.length,
-      pendingDrivers: pending.length,
-      totalRevenue: revenue,
+      totalBookings: bookings.length || 0,
+      totalDrivers: drivers.length || 0,
+      pendingDrivers: pending.length || 0,
+      totalRevenue: revenue || 0,
+      totalTourists: touristCount || 0,
     });
 
     setPendingDrivers(pending);
@@ -83,15 +97,15 @@ const AdminDashboard = () => {
         <h1 className="text-4xl font-bold mb-8">Admin Dashboard</h1>
 
         {/* Stats Grid */}
-        <div className="grid md:grid-cols-4 gap-6 mb-8">
+        <div className="grid md:grid-cols-2 lg:grid-cols-5 gap-6 mb-8">
           <Card>
             <CardContent className="pt-6">
               <div className="flex items-center justify-between">
                 <div>
                   <p className="text-sm text-muted-foreground">Total Bookings</p>
-                  <p className="text-3xl font-bold">{stats.totalBookings}</p>
+                  <p className="text-3xl font-bold">{stats.totalBookings || 0}</p>
                 </div>
-                <MapPin className="h-8 w-8 text-primary" />
+                <MapPin className="h-8 w-8 text-primary" aria-hidden="true" />
               </div>
             </CardContent>
           </Card>
@@ -100,9 +114,20 @@ const AdminDashboard = () => {
               <div className="flex items-center justify-between">
                 <div>
                   <p className="text-sm text-muted-foreground">Total Drivers</p>
-                  <p className="text-3xl font-bold">{stats.totalDrivers}</p>
+                  <p className="text-3xl font-bold">{stats.totalDrivers || 0}</p>
                 </div>
-                <Car className="h-8 w-8 text-primary" />
+                <Car className="h-8 w-8 text-primary" aria-hidden="true" />
+              </div>
+            </CardContent>
+          </Card>
+          <Card>
+            <CardContent className="pt-6">
+              <div className="flex items-center justify-between">
+                <div>
+                  <p className="text-sm text-muted-foreground">Total Tourists</p>
+                  <p className="text-3xl font-bold">{stats.totalTourists || 0}</p>
+                </div>
+                <Users className="h-8 w-8 text-primary" aria-hidden="true" />
               </div>
             </CardContent>
           </Card>
@@ -111,9 +136,9 @@ const AdminDashboard = () => {
               <div className="flex items-center justify-between">
                 <div>
                   <p className="text-sm text-muted-foreground">Pending Verification</p>
-                  <p className="text-3xl font-bold">{stats.pendingDrivers}</p>
+                  <p className="text-3xl font-bold">{stats.pendingDrivers || 0}</p>
                 </div>
-                <Users className="h-8 w-8 text-yellow-500" />
+                <Users className="h-8 w-8 text-warning" aria-hidden="true" />
               </div>
             </CardContent>
           </Card>
@@ -121,10 +146,10 @@ const AdminDashboard = () => {
             <CardContent className="pt-6">
               <div className="flex items-center justify-between">
                 <div>
-                  <p className="text-sm text-muted-foreground">Total Revenue</p>
-                  <p className="text-3xl font-bold">{formatCurrency(stats.totalRevenue)}</p>
+                  <p className="text-sm text-muted-foreground">Total Earnings</p>
+                  <p className="text-3xl font-bold">{formatCurrency(stats.totalRevenue || 0)}</p>
                 </div>
-                <IndianRupee className="h-8 w-8 text-green-500" />
+                <IndianRupee className="h-8 w-8 text-success" aria-hidden="true" />
               </div>
             </CardContent>
           </Card>

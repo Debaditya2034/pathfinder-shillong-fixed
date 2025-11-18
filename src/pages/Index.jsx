@@ -127,10 +127,10 @@ const Index = () => {
                 </p>
                 <div className="mt-8 grid gap-6 md:grid-cols-2">
                   {heroHighlights.map((item) => (
-                    <div key={item.title} className="rounded-2xl border border-white/15 bg-white/5 p-5 shadow-glow backdrop-blur">
-                      <item.icon className="mb-3 h-6 w-6 text-accent" />
-                      <p className="font-semibold">{item.title}</p>
-                      <p className="text-sm text-white/70">{item.description}</p>
+                    <div key={item.title} className="rounded-2xl border border-white/25 bg-white/10 p-6 shadow-lg backdrop-blur-sm transition-all hover:bg-white/15 hover:border-white/35" role="article" aria-label={item.title}>
+                      <item.icon className="mb-3 h-6 w-6 text-accent" aria-hidden="true" />
+                      <p className="font-semibold text-lg mb-2">{item.title}</p>
+                      <p className="text-sm text-white/85 leading-relaxed">{item.description}</p>
                     </div>
                   ))}
                 </div>
@@ -138,29 +138,29 @@ const Index = () => {
                 <div className="mt-10 flex flex-wrap gap-4">
                   {!isDriver ? (
                     <>
-                      <Link to="/itinerary">
-                        <Button size="lg" className="shadow-[0_25px_45px_rgba(4,31,18,0.35)]">
-                          <MapPin className="mr-2 h-5 w-5" />
+                      <Link to="/itinerary" aria-label="Plan your journey">
+                        <Button size="lg" className="shadow-[0_25px_45px_rgba(4,31,18,0.5)] min-h-[48px] px-6 transition-all hover:scale-105 active:scale-95">
+                          <MapPin className="mr-2 h-5 w-5" aria-hidden="true" />
                           Plan my journey
                         </Button>
                       </Link>
-                      <Link to="/auth?mode=signup">
-                        <Button size="lg" variant="outline" className="border-white/60 text-white hover:text-white">
+                      <Link to="/auth?mode=signup" aria-label="Get started">
+                        <Button size="lg" variant="outline" className="border-white/70 text-white hover:bg-white/10 hover:text-white min-h-[48px] px-6 transition-all hover:scale-105 active:scale-95">
                           Get started
-                          <ChevronRight className="ml-2 h-5 w-5" />
+                          <ChevronRight className="ml-2 h-5 w-5" aria-hidden="true" />
                         </Button>
                       </Link>
                     </>
                   ) : (
                     <>
-                      <Link to="/driver">
-                        <Button size="lg" variant="accent" className="text-pf-green">
-                          <Car className="mr-2 h-5 w-5" />
+                      <Link to="/driver" aria-label="View ride board">
+                        <Button size="lg" variant="accent" className="min-h-[48px] px-6 transition-all hover:scale-105 active:scale-95">
+                          <Car className="mr-2 h-5 w-5" aria-hidden="true" />
                           View ride board
                         </Button>
                       </Link>
-                      <Link to="/itinerary">
-                        <Button size="lg" variant="outline" className="border-white/60 text-white hover:text-white">
+                      <Link to="/itinerary" aria-label="Book for someone else">
+                        <Button size="lg" variant="outline" className="border-white/70 text-white hover:bg-white/10 hover:text-white min-h-[48px] px-6 transition-all hover:scale-105 active:scale-95">
                           Book for someone else
                         </Button>
                       </Link>
@@ -168,41 +168,44 @@ const Index = () => {
                   )}
                 </div>
 
-                <div className="mt-12 grid gap-6 sm:grid-cols-3">
+                <div className="mt-12 grid gap-6 sm:grid-cols-3" role="region" aria-label="Statistics">
                   {heroStats.map((stat) => (
-                    <div key={stat.label}>
-                      <p className="text-3xl font-semibold">{stat.value}</p>
-                      <p className="text-sm uppercase tracking-wide text-white/70">{stat.label}</p>
+                    <div key={stat.label} className="bg-white/5 rounded-xl p-4 border border-white/10 backdrop-blur-sm">
+                      <p className="text-3xl md:text-4xl font-bold mb-1" style={{ textShadow: '0 2px 8px rgba(0,0,0,0.3)' }}>{stat.value}</p>
+                      <p className="text-sm uppercase tracking-wide text-white/85 font-medium">{stat.label}</p>
                     </div>
                   ))}
                 </div>
               </div>
 
-              <div className="glass-panel rounded-[32px] p-8 shadow-xl">
+              <div className="glass-panel rounded-[32px] p-8 shadow-xl border border-border/50">
                 <div className="mb-6 flex items-center justify-between">
                   <div>
-                    <p className="text-sm text-muted-foreground">Next departure</p>
-                    <p className="text-2xl font-semibold text-foreground">Skyfall Loop</p>
+                    <p className="text-sm text-muted-foreground uppercase tracking-wide">Next departure</p>
+                    <p className="text-2xl font-bold text-foreground mt-1">Skyfall Loop</p>
                   </div>
-                  <Badge variant="driver">demo</Badge>
+                  <Badge variant="driver" aria-label="Demo badge">demo</Badge>
                 </div>
 
                 <div className="space-y-4">
                   {curatedRoutes.map((route) => (
                     <div
                       key={route.id}
-                      className="rounded-2xl border border-border/70 bg-panel-bg/70 px-4 py-3 shadow-sm transition hover:border-pf-green/60"
+                      className="rounded-2xl border border-border/70 bg-card/80 px-4 py-4 shadow-sm transition-all hover:border-primary/60 hover:bg-card/90 cursor-pointer"
+                      role="button"
+                      tabIndex={0}
+                      aria-label={`Route: ${route.title}`}
                     >
-                      <p className="text-sm font-medium text-muted-foreground">{route.title}</p>
-                      <p className="text-base font-semibold text-foreground">{route.stops}</p>
+                      <p className="text-sm font-semibold text-muted-foreground uppercase tracking-wide mb-1">{route.title}</p>
+                      <p className="text-base font-bold text-foreground mb-1">{route.stops}</p>
                       <p className="text-xs text-muted-foreground">{route.distance}</p>
                     </div>
                   ))}
                 </div>
 
-                <div className="mt-6 rounded-2xl bg-gradient-to-r from-pf-green to-pf-green-600 p-5 text-white">
-                  <p className="text-sm uppercase tracking-wide text-white/80">Local tip</p>
-                  <p className="text-lg font-semibold">
+                <div className="mt-6 rounded-2xl bg-gradient-to-r from-primary to-primary/80 p-6 text-white shadow-lg" role="note" aria-label="Local tip">
+                  <p className="text-sm uppercase tracking-wide text-white/90 font-semibold mb-2">Local tip</p>
+                  <p className="text-lg font-bold leading-relaxed">
                     Start before sunrise to beat the fog wall on the Laitlum stretch.
                   </p>
                 </div>
@@ -214,19 +217,19 @@ const Index = () => {
         <section className="section-halo py-16">
           <div className="container mx-auto px-4">
             <div className="mx-auto mb-12 max-w-3xl text-center">
-              <p className="text-sm font-semibold uppercase tracking-wide text-pf-green">Built for travellers</p>
-              <h2 className="mt-3 text-3xl font-bold text-foreground md:text-4xl">
+              <p className="text-sm font-semibold uppercase tracking-wide text-primary mb-3">Built for travellers</p>
+              <h2 className="mt-3 text-3xl md:text-4xl lg:text-5xl font-bold text-foreground leading-tight">
                 Why PathFinder is the calmest way to move through Meghalaya
               </h2>
             </div>
             <div className="grid gap-6 md:grid-cols-2 lg:grid-cols-4">
               {journeySteps.map((step) => (
-                <div key={step.title} className="glass-panel rounded-3xl p-6">
-                  <div className="mb-4 flex h-12 w-12 items-center justify-center rounded-2xl bg-pf-green/10 text-pf-green">
-                    <step.icon className="h-6 w-6" />
+                <div key={step.title} className="glass-panel rounded-3xl p-6 transition-all hover:scale-105 hover:shadow-lg" role="article" aria-label={step.title}>
+                  <div className="mb-4 flex h-14 w-14 items-center justify-center rounded-2xl bg-primary/20 text-primary">
+                    <step.icon className="h-7 w-7" aria-hidden="true" />
                   </div>
-                  <p className="text-lg font-semibold">{step.title}</p>
-                  <p className="mt-2 text-sm text-muted-foreground">{step.description}</p>
+                  <p className="text-lg md:text-xl font-bold mb-3">{step.title}</p>
+                  <p className="mt-2 text-sm md:text-base text-muted-foreground leading-relaxed">{step.description}</p>
                 </div>
               ))}
             </div>
@@ -237,9 +240,9 @@ const Index = () => {
           <div className="container mx-auto px-4">
             <div className="mb-10 flex flex-col gap-4 md:flex-row md:items-end md:justify-between">
               <div>
-                <p className="text-sm font-semibold uppercase tracking-wide text-pf-green">Explore Meghalaya</p>
-                <h2 className="mt-3 text-3xl font-bold md:text-4xl">Pick a vibe, PathFinder handles the rest.</h2>
-                <p className="text-muted-foreground">
+                <p className="text-sm font-semibold uppercase tracking-wide text-primary mb-3">Explore Meghalaya</p>
+                <h2 className="mt-3 text-3xl md:text-4xl lg:text-5xl font-bold leading-tight">Pick a vibe, PathFinder handles the rest.</h2>
+                <p className="mt-4 text-base md:text-lg text-muted-foreground leading-relaxed max-w-2xl">
                   Walk through misty root bridges, taste smoky Khasi cuisine, shop indigenous handicrafts, and more.
                 </p>
               </div>
@@ -248,12 +251,13 @@ const Index = () => {
 
             <div className="grid gap-6 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4">
               {filteredPlaces.map((place) => (
-                <Card key={place.id} className="group overflow-hidden border-none bg-panel-bg/90 shadow-md transition hover:-translate-y-1">
+                <Card key={place.id} className="group overflow-hidden border border-border/50 bg-card shadow-md transition-all hover:-translate-y-2 hover:shadow-xl" role="article" aria-label={place.name}>
                   <div className="relative h-48 overflow-hidden">
                     <img
                       src={place.image}
                       alt={place.name}
                       className="h-full w-full object-cover transition duration-500 group-hover:scale-110"
+                      loading="lazy"
                     />
                     <div className="absolute top-3 left-3 rounded-full px-3 py-1 text-xs font-semibold uppercase text-white">
                       <span className={`${categoryColors[place.category]} px-3 py-1 rounded-full`}>
@@ -265,12 +269,12 @@ const Index = () => {
                       {place.rating}
                     </div>
                   </div>
-                  <CardContent className="p-5">
-                    <h3 className="text-lg font-semibold">{place.name}</h3>
-                    <p className="mt-2 text-sm text-muted-foreground line-clamp-2">{place.description}</p>
+                  <CardContent className="p-6">
+                    <h3 className="text-lg md:text-xl font-bold mb-2">{place.name}</h3>
+                    <p className="mt-2 text-sm md:text-base text-muted-foreground line-clamp-2 leading-relaxed">{place.description}</p>
                     {place.distance && (
-                      <p className="mt-3 flex items-center text-xs text-muted-foreground">
-                        <MapPin className="mr-1 h-3 w-3" />
+                      <p className="mt-4 flex items-center text-sm text-muted-foreground">
+                        <MapPin className="mr-2 h-4 w-4" aria-hidden="true" />
                         {place.distance} from city centre
                       </p>
                     )}
@@ -304,9 +308,9 @@ const Index = () => {
 
             <div className="grid gap-6 md:grid-cols-2 xl:grid-cols-3">
               {highlightedRestaurants.map((spot) => (
-                <Card key={spot.id} className="flex flex-col overflow-hidden border-none bg-white shadow-[0_25px_60px_rgba(15,90,54,0.08)]">
+                <Card key={spot.id} className="flex flex-col overflow-hidden border border-border/50 bg-card shadow-lg transition-all hover:shadow-xl hover:-translate-y-1" role="article" aria-label={spot.name}>
                   <div className="relative h-56 overflow-hidden">
-                    <img src={spot.image} alt={spot.name} className="h-full w-full object-cover transition duration-700 hover:scale-110" />
+                    <img src={spot.image} alt={spot.name} className="h-full w-full object-cover transition duration-700 hover:scale-110" loading="lazy" />
                     <div className="absolute top-4 left-4 rounded-full bg-black/55 px-3 py-1 text-sm font-semibold text-white backdrop-blur">
                       <Star className="mr-1 inline h-4 w-4 text-accent" />
                       {spot.rating.toFixed(1)}

@@ -11,7 +11,7 @@ const DriverDashboard = () => {
   const navigate = useNavigate();
   const [user, setUser] = useState(null);
   const [bookings, setBookings] = useState([]);
-  const [stats, setStats] = useState({ total: 0, completed: 0, earnings: 0 });
+  const [stats, setStats] = useState({ total: 0, accepted: 0, completed: 0, pending: 0, earnings: 0 });
 
   useEffect(() => {
     const userData = localStorage.getItem("pathfinder_user");
@@ -35,13 +35,25 @@ const DriverDashboard = () => {
     const driverBookings = allBookings.filter((booking) => booking.status === "pending" || booking.driverId === driverId);
     setBookings(driverBookings);
 
+    // Count accepted bookings (trips accepted)
+    const accepted = driverBookings.filter((booking) => booking.status === "accepted" || booking.status === "completed").length;
     const completed = driverBookings.filter((booking) => booking.status === "completed").length;
-    const earnings = driverBookings.filter((booking) => booking.status === "completed").reduce((sum, booking) => sum + booking.estimatedCost, 0);
+    const pending = driverBookings.filter((booking) => booking.status === "pending").length;
+    
+    // Calculate earnings from completed or accepted bookings
+    const earnings = driverBookings
+      .filter((booking) => booking.status === "completed" || booking.status === "accepted")
+      .reduce((sum, booking) => {
+        const cost = booking.estimatedCost || booking.total || booking.cost || 0;
+        return sum + (typeof cost === 'number' ? cost : 0);
+      }, 0);
 
     setStats({
-      total: driverBookings.length,
-      completed,
-      earnings,
+      total: driverBookings.length || 0,
+      accepted: accepted || 0,
+      completed: completed || 0,
+      pending: pending || 0,
+      earnings: earnings || 0,
     });
   };
 
@@ -85,15 +97,15 @@ const DriverDashboard = () => {
         <h1 className="text-4xl font-bold mb-8">Driver Dashboard</h1>
 
         {/* Stats */}
-        <div className="grid md:grid-cols-3 gap-6 mb-8">
+        <div className="grid md:grid-cols-2 lg:grid-cols-4 gap-6 mb-8">
           <Card>
             <CardContent className="pt-6">
               <div className="flex items-center justify-between">
                 <div>
-                  <p className="text-sm text-muted-foreground">Total Bookings</p>
-                  <p className="text-3xl font-bold">{stats.total}</p>
+                  <p className="text-sm text-muted-foreground">Trips Accepted</p>
+                  <p className="text-3xl font-bold">{stats.accepted || 0}</p>
                 </div>
-                <Car className="h-8 w-8 text-primary" />
+                <CheckCircle className="h-8 w-8 text-primary" aria-hidden="true" />
               </div>
             </CardContent>
           </Card>
@@ -102,9 +114,9 @@ const DriverDashboard = () => {
               <div className="flex items-center justify-between">
                 <div>
                   <p className="text-sm text-muted-foreground">Completed</p>
-                  <p className="text-3xl font-bold">{stats.completed}</p>
+                  <p className="text-3xl font-bold">{stats.completed || 0}</p>
                 </div>
-                <CheckCircle className="h-8 w-8 text-green-500" />
+                <CheckCircle className="h-8 w-8 text-success" aria-hidden="true" />
               </div>
             </CardContent>
           </Card>
@@ -112,10 +124,21 @@ const DriverDashboard = () => {
             <CardContent className="pt-6">
               <div className="flex items-center justify-between">
                 <div>
-                  <p className="text-sm text-muted-foreground">Earnings</p>
-                  <p className="text-3xl font-bold">{formatCurrency(stats.earnings)}</p>
+                  <p className="text-sm text-muted-foreground">Pending</p>
+                  <p className="text-3xl font-bold">{stats.pending || 0}</p>
                 </div>
-                <IndianRupee className="h-8 w-8 text-primary" />
+                <Car className="h-8 w-8 text-warning" aria-hidden="true" />
+              </div>
+            </CardContent>
+          </Card>
+          <Card>
+            <CardContent className="pt-6">
+              <div className="flex items-center justify-between">
+                <div>
+                  <p className="text-sm text-muted-foreground">Total Earnings</p>
+                  <p className="text-3xl font-bold">{formatCurrency(stats.earnings || 0)}</p>
+                </div>
+                <IndianRupee className="h-8 w-8 text-success" aria-hidden="true" />
               </div>
             </CardContent>
           </Card>

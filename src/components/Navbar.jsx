@@ -21,7 +21,7 @@ export const Navbar = ({ user, onLogout }) => {
     if (user) {
       return (
         <>
-          <Link to={`/${user.role}`} className="text-foreground/80 hover:text-foreground transition-colors" onClick={() => setMobileMenuOpen(false)}>
+          <Link to={`/${user.role}`} className="text-[#e8f6ef] hover:text-[#14c47b] transition-colors" onClick={() => setMobileMenuOpen(false)}>
             Dashboard
           </Link>
           <Button
@@ -57,41 +57,41 @@ export const Navbar = ({ user, onLogout }) => {
   };
 
   return (
-    <nav role="navigation" className="fixed top-0 left-0 right-0 z-50 bg-background/95 backdrop-blur-sm border-b border-border">
+    <nav role="navigation" className="fixed top-0 left-0 right-0 z-50 bg-[#0b0f0c] backdrop-blur-sm border-b border-[#1d3a2f]">
       <div className="container mx-auto px-4">
         <div className="flex items-center justify-between h-16">
           <Link to="/" className="flex items-center gap-2">
-            <Mountain className="h-6 w-6 text-primary" />
-            <span className="font-bold text-xl">PathFinder</span>
+            <Mountain className="h-6 w-6 text-pf-green" />
+            <span className="font-bold text-xl text-pf-green">PathFinder</span>
           </Link>
 
           <div className="hidden md:flex items-center gap-6">
-            <Link to="/" className="text-foreground/80 hover:text-foreground transition-colors" aria-label="Home">
+            <Link to="/" className="text-[#e8f6ef] hover:text-[#14c47b] transition-colors" aria-label="Home">
               Home
             </Link>
-            <Link to="/about" className="text-foreground/80 hover:text-foreground transition-colors" aria-label="About">
+            <Link to="/about" className="text-[#e8f6ef] hover:text-[#14c47b] transition-colors" aria-label="About">
               About
             </Link>
-            <Link to="/itinerary" className="text-foreground/80 hover:text-foreground transition-colors" aria-label="Plan Trip">
+            <Link to="/itinerary" className="text-[#e8f6ef] hover:text-[#14c47b] transition-colors" aria-label="Plan Trip">
               Plan Trip
             </Link>
             {renderAuthButtons()}
           </div>
 
-          <button type="button" onClick={() => setMobileMenuOpen((open) => !open)} className="md:hidden text-foreground" aria-label="Toggle menu">
+          <button type="button" onClick={() => setMobileMenuOpen((open) => !open)} className="md:hidden text-[#e8f6ef]" aria-label="Toggle menu">
             {mobileMenuOpen ? <X /> : <Menu />}
           </button>
         </div>
 
         {mobileMenuOpen && (
           <div className="md:hidden py-4 flex flex-col gap-4">
-            <Link to="/" onClick={() => setMobileMenuOpen(false)} className="text-foreground/80 hover:text-foreground transition-colors" aria-label="Home">
+            <Link to="/" onClick={() => setMobileMenuOpen(false)} className="text-[#e8f6ef] hover:text-[#14c47b] transition-colors" aria-label="Home">
               Home
             </Link>
-            <Link to="/about" onClick={() => setMobileMenuOpen(false)} className="text-foreground/80 hover:text-foreground transition-colors" aria-label="About">
+            <Link to="/about" onClick={() => setMobileMenuOpen(false)} className="text-[#e8f6ef] hover:text-[#14c47b] transition-colors" aria-label="About">
               About
             </Link>
-            <Link to="/itinerary" onClick={() => setMobileMenuOpen(false)} className="text-foreground/80 hover:text-foreground transition-colors" aria-label="Plan Trip">
+            <Link to="/itinerary" onClick={() => setMobileMenuOpen(false)} className="text-[#e8f6ef] hover:text-[#14c47b] transition-colors" aria-label="Plan Trip">
               Plan Trip
             </Link>
             {renderAuthButtons("mobile")}

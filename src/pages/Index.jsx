@@ -140,13 +140,13 @@ const Index = () => {
                   {!isDriver ? (
                     <>
                       <Link to="/itinerary" tabIndex={0} className="pf-focus">
-                        <button className="pf-btn bg-pf-green text-black hover:-translate-y-0.5 hover:shadow-md disabled:opacity-50 disabled:cursor-not-allowed">
+                        <button className="pf-btn bg-pf-green text-black hover:bg-[#12c77c] disabled:opacity-50 disabled:cursor-not-allowed">
                           <MapPin className="mr-2 h-5 w-5" aria-hidden="true" />
                           Plan my journey
                         </button>
                       </Link>
                       <Link to="/auth?mode=signup" tabIndex={0} className="pf-focus">
-                        <button className="pf-btn bg-transparent border border-gray-600 text-white hover:-translate-y-0.5 hover:shadow-md disabled:opacity-50 disabled:cursor-not-allowed">
+                        <button className="pf-btn bg-transparent border border-[#1d3a2f] text-[#e8f6ef] hover:bg-[#14221c] hover:border-pf-green disabled:opacity-50 disabled:cursor-not-allowed">
                           Get started
                           <ChevronRight className="ml-2 h-5 w-5" aria-hidden="true" />
                         </button>
@@ -155,13 +155,13 @@ const Index = () => {
                   ) : (
                     <>
                       <Link to="/driver" tabIndex={0} className="pf-focus">
-                        <button className="pf-btn bg-pf-green text-black hover:-translate-y-0.5 hover:shadow-md disabled:opacity-50 disabled:cursor-not-allowed">
+                        <button className="pf-btn bg-pf-green text-black hover:bg-[#12c77c] disabled:opacity-50 disabled:cursor-not-allowed">
                           <Car className="mr-2 h-5 w-5" aria-hidden="true" />
                           View ride board
                         </button>
                       </Link>
                       <Link to="/itinerary" tabIndex={0} className="pf-focus">
-                        <button className="pf-btn bg-transparent border border-gray-600 text-white hover:-translate-y-0.5 hover:shadow-md disabled:opacity-50 disabled:cursor-not-allowed">
+                        <button className="pf-btn bg-transparent border border-[#1d3a2f] text-[#e8f6ef] hover:bg-[#14221c] hover:border-pf-green disabled:opacity-50 disabled:cursor-not-allowed">
                           Book for someone else
                         </button>
                       </Link>
@@ -179,11 +179,11 @@ const Index = () => {
                 </div>
               </div>
 
-              <div className="glass-panel rounded-[32px] p-8 shadow-xl bg-pf-muted">
+              <div className="rounded-[32px] p-8 shadow-xl bg-[#14221c] border border-[#1d3a2f]">
                 <div className="mb-6 flex items-center justify-between">
                   <div className="flex-1 min-w-0">
-                    <p className="text-sm text-muted-foreground">Next departure</p>
-                    <p className="text-2xl font-semibold text-foreground whitespace-normal break-words">Skyfall Loop</p>
+                    <p className="text-sm text-[#d9efe6]">Next departure</p>
+                    <p className="text-2xl font-semibold text-[#e3f5ec] whitespace-normal break-words">Skyfall Loop</p>
                   </div>
                   <Badge variant="driver" className="ml-2 flex-shrink-0">demo</Badge>
                 </div>
@@ -192,18 +192,18 @@ const Index = () => {
                   {curatedRoutes.map((route) => (
                     <div
                       key={route.id}
-                      className="rounded-2xl border border-border/70 bg-panel-bg/70 px-4 py-3 shadow-sm transition hover:border-pf-green/60 min-h-[120px]"
+                      className="rounded-2xl border border-[#1d3a2f] bg-[#14221c] px-4 py-3 shadow-sm transition hover:border-pf-green/60 min-h-[120px]"
                     >
-                      <p className="text-sm font-medium text-muted-foreground whitespace-normal break-words">{route.title}</p>
-                      <p className="text-base font-semibold text-foreground whitespace-normal break-words">{route.stops}</p>
-                      <p className="text-xs text-muted-foreground whitespace-normal break-words">{route.distance}</p>
+                      <p className="text-sm font-medium text-[#d9efe6] whitespace-normal break-words">{route.title}</p>
+                      <p className="text-base font-semibold text-[#e3f5ec] whitespace-normal break-words">{route.stops}</p>
+                      <p className="text-xs text-[#d9efe6] whitespace-normal break-words">{route.distance}</p>
                     </div>
                   ))}
                 </div>
 
-                <div className="mt-6 rounded-2xl bg-gradient-to-r from-pf-green to-pf-green-600 p-5 text-white">
-                  <p className="text-sm uppercase tracking-wide text-white/80">Local tip</p>
-                  <p className="text-lg font-semibold">
+                <div className="mt-6 rounded-2xl bg-gradient-to-r from-pf-green to-pf-green-600 p-5 text-black">
+                  <p className="text-sm uppercase tracking-wide text-black/80">Local tip</p>
+                  <p className="text-lg font-semibold text-black">
                     Start before sunrise to beat the fog wall on the Laitlum stretch.
                   </p>
                 </div>
@@ -216,18 +216,18 @@ const Index = () => {
           <div className="container mx-auto px-4 md:px-8">
             <div className="mx-auto mb-12 max-w-3xl text-center">
               <p className="text-sm font-semibold uppercase tracking-wide text-pf-green">Built for travellers</p>
-              <h2 className="mt-3 text-2xl md:text-3xl font-semibold text-foreground">
+              <h2 className="mt-3 text-2xl md:text-3xl font-semibold text-[#e3f5ec]">
                 Why PathFinder is the calmest way to move through Meghalaya
               </h2>
             </div>
             <div className="grid gap-6 md:grid-cols-2 lg:grid-cols-4">
               {journeySteps.map((step) => (
-                <div key={step.title} className="glass-panel rounded-3xl p-6">
+                <div key={step.title} className="rounded-3xl p-6 bg-[#14221c] border border-[#1d3a2f]">
                   <div className="mb-4 flex h-12 w-12 items-center justify-center rounded-2xl bg-pf-green/10 text-pf-green">
-                    <step.icon className="h-6 w-6" />
+                    <step.icon className="h-6 w-6" aria-hidden="true" />
                   </div>
-                  <p className="text-lg font-semibold">{step.title}</p>
-                  <p className="mt-2 text-sm text-muted-foreground">{step.description}</p>
+                  <p className="text-lg font-semibold text-[#e3f5ec]">{step.title}</p>
+                  <p className="mt-2 text-sm text-[#d9efe6]">{step.description}</p>
                 </div>
               ))}
             </div>
@@ -239,8 +239,8 @@ const Index = () => {
             <div className="mb-10 flex flex-col gap-4 md:flex-row md:items-end md:justify-between">
               <div>
                 <p className="text-sm font-semibold uppercase tracking-wide text-pf-green">Explore Meghalaya</p>
-                <h2 className="mt-3 text-2xl md:text-3xl font-semibold">Pick a vibe, PathFinder handles the rest.</h2>
-                <p className="text-sm md:text-base leading-relaxed text-gray-200 mt-2">
+                <h2 className="mt-3 text-2xl md:text-3xl font-semibold text-[#e3f5ec]">Pick a vibe, PathFinder handles the rest.</h2>
+                <p className="text-sm md:text-base leading-relaxed text-[#d9efe6] mt-2">
                   Walk through misty root bridges, taste smoky Khasi cuisine, shop indigenous handicrafts, and more.
                 </p>
               </div>
@@ -249,7 +249,7 @@ const Index = () => {
 
             <div className="grid gap-6 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4">
               {filteredPlaces.map((place) => (
-                <Card key={place.id} className="group overflow-hidden border-none bg-panel-bg/90 shadow-md transition hover:-translate-y-1 min-h-[120px]">
+                <Card key={place.id} className="group overflow-hidden border border-[#1d3a2f] bg-[#14221c] shadow-md transition hover:-translate-y-1 min-h-[120px]">
                   <div className="relative h-48 overflow-hidden">
                     <img
                       src={place.image}
@@ -257,21 +257,21 @@ const Index = () => {
                       className="h-full w-full object-cover transition duration-500 group-hover:scale-110"
                       loading="lazy"
                     />
-                    <div className="absolute top-3 left-3 rounded-full px-3 py-1 text-xs font-semibold uppercase text-white">
+                    <div className="absolute top-3 left-3 rounded-full px-3 py-1 text-xs font-semibold uppercase text-[#e8f6ef]">
                       <span className={`${categoryColors[place.category]} px-3 py-1 rounded-full`}>
                         {place.category}
                       </span>
                     </div>
-                    <div className="absolute top-3 right-3 rounded-full bg-black/60 px-3 py-1 text-sm font-semibold text-white backdrop-blur">
+                    <div className="absolute top-3 right-3 rounded-full bg-black/60 px-3 py-1 text-sm font-semibold text-[#e8f6ef] backdrop-blur">
                       <Star className="mr-1 inline h-4 w-4 text-accent" aria-hidden="true" />
                       {place.rating}
                     </div>
                   </div>
                   <CardContent className="p-5">
-                    <h3 className="text-lg font-semibold">{place.name}</h3>
-                    <p className="mt-2 text-sm text-muted-foreground line-clamp-2">{place.description}</p>
+                    <h3 className="text-lg font-semibold text-[#e3f5ec]">{place.name}</h3>
+                    <p className="mt-2 text-sm text-[#d9efe6] line-clamp-2">{place.description}</p>
                     {place.distance && (
-                      <p className="mt-3 flex items-center text-xs text-muted-foreground">
+                      <p className="mt-3 flex items-center text-xs text-[#d9efe6]">
                         <MapPin className="mr-1 h-3 w-3" aria-hidden="true" />
                         {place.distance} from city centre
                       </p>
@@ -283,49 +283,49 @@ const Index = () => {
           </div>
         </section>
 
-        <section className="bg-panel-bg/60 py-16">
-          <div className="container mx-auto px-4">
+        <section className="bg-[#0f1412] py-16">
+          <div className="container mx-auto px-4 md:px-8">
             <div className="mb-10 flex flex-col gap-6 md:flex-row md:items-center md:justify-between">
               <div>
-                <p className="text-sm font-semibold uppercase tracking-wide text-pf-green flex items-center gap-2">
-                  <UtensilsCrossed className="h-4 w-4" />
+                <p className="text-sm font-semibold uppercase tracking-wide text-pf-green flex items-center gap-2 mb-3">
+                  <UtensilsCrossed className="h-4 w-4" aria-hidden="true" />
                   Shillong eats
                 </p>
-                <h2 className="mt-3 text-3xl font-bold md:text-4xl">Restaurants locals recommend without a second thought.</h2>
-                <p className="mt-2 max-w-2xl text-muted-foreground">
-                  Seed your itinerary with smoky jadoh kitchens, zero-mile farm tables, and cafÃ©s that stay open through the rain curtains.
+                <h2 className="mt-3 text-2xl md:text-3xl font-semibold text-[#e3f5ec]">Restaurants locals recommend without a second thought.</h2>
+                <p className="mt-4 max-w-2xl text-sm md:text-base text-[#d9efe6] leading-relaxed">
+                  Seed your itinerary with smoky jadoh kitchens, zero-mile farm tables, and cafés that stay open through the rain curtains.
                 </p>
               </div>
-              <Link to="/itinerary">
-                <Button size="lg" variant="accent" className="shadow-[0_25px_45px_rgba(15,90,54,0.25)]">
+              <Link to="/itinerary" aria-label="Add food halts to itinerary" tabIndex={0} className="pf-focus">
+                <button className="pf-btn bg-pf-green text-black hover:bg-[#12c77c] disabled:opacity-50 disabled:cursor-not-allowed min-h-[48px] px-6">
                   {isDriver ? "Book for someone else" : "Add food halts"}
-                  <ChevronRight className="ml-2 h-5 w-5" />
-                </Button>
+                  <ChevronRight className="ml-2 h-5 w-5" aria-hidden="true" />
+                </button>
               </Link>
             </div>
 
             <div className="grid gap-6 md:grid-cols-2 xl:grid-cols-3">
               {highlightedRestaurants.map((spot) => (
-                <Card key={spot.id} className="flex flex-col overflow-hidden border-none bg-white shadow-[0_25px_60px_rgba(15,90,54,0.08)]">
+                <Card key={spot.id} className="flex flex-col overflow-hidden border border-[#1d3a2f] bg-[#14221c] shadow-lg">
                   <div className="relative h-56 overflow-hidden">
-                    <img src={spot.image} alt={spot.name} className="h-full w-full object-cover transition duration-700 hover:scale-110" />
-                    <div className="absolute top-4 left-4 rounded-full bg-black/55 px-3 py-1 text-sm font-semibold text-white backdrop-blur">
+                    <img src={spot.image} alt={spot.name} className="h-full w-full object-cover transition duration-700 hover:scale-110" loading="lazy" />
+                    <div className="absolute top-4 left-4 rounded-full bg-black/55 px-3 py-1 text-sm font-semibold text-[#e8f6ef] backdrop-blur">
                       <Star className="mr-1 inline h-4 w-4 text-accent" aria-hidden="true" />
                       {spot.rating.toFixed(1)}
                     </div>
-                    <div className="absolute bottom-4 left-4 rounded-full bg-white/85 px-4 py-1 text-xs font-semibold uppercase text-pf-green whitespace-normal break-words">
+                    <div className="absolute bottom-4 left-4 rounded-full bg-[#14221c]/90 px-4 py-1 text-xs font-semibold uppercase text-pf-green whitespace-normal break-words border border-[#1d3a2f]">
                       Signature: {spot.specialty}
                     </div>
                   </div>
                   <CardContent className="flex flex-1 flex-col gap-4 p-6">
                     <div className="space-y-1">
-                      <p className="text-xs font-semibold uppercase tracking-[0.2em] text-muted-foreground">Chef verified</p>
-                      <h3 className="text-xl font-semibold text-foreground">{spot.name}</h3>
+                      <p className="text-xs font-semibold uppercase tracking-[0.2em] text-[#d9efe6]">Chef verified</p>
+                      <h3 className="text-xl font-semibold text-[#e3f5ec]">{spot.name}</h3>
                     </div>
-                    <p className="text-sm text-muted-foreground flex-1">{spot.description}</p>
+                    <p className="text-sm text-[#d9efe6] flex-1">{spot.description}</p>
                     <div className="flex flex-wrap gap-2">
                       {spot.tags.map((tag) => (
-                        <span key={tag} className="rounded-full bg-panel-bg px-3 py-1 text-xs font-semibold text-muted-foreground">
+                        <span key={tag} className="rounded-full bg-[#0f1412] px-3 py-1 text-xs font-semibold text-[#d9efe6] border border-[#1d3a2f]">
                           {tag}
                         </span>
                       ))}
@@ -341,16 +341,16 @@ const Index = () => {
           <div className="container relative z-10 mx-auto px-4 md:px-8">
             <div className="bg-pf-muted rounded-xl p-6 md:p-8 flex flex-col md:flex-row items-center justify-between gap-4">
               <div className="flex-1">
-                <h2 className="text-lg md:text-xl font-semibold text-white">Plan your trip across Meghalaya</h2>
-                <p className="text-sm text-gray-300 mt-1 leading-relaxed">Create multi-stop itineraries, pick vehicles, and get instant estimates.</p>
+                <h2 className="text-lg md:text-xl font-semibold text-[#e3f5ec]">Plan your trip across Meghalaya</h2>
+                <p className="text-sm text-[#d9efe6] mt-1 leading-relaxed">Create multi-stop itineraries, pick vehicles, and get instant estimates.</p>
               </div>
               <div className="flex items-center gap-3">
                 <Link to="/itinerary" tabIndex={0} className="pf-focus">
-                  <button className="pf-btn bg-pf-green text-black hover:scale-[1.02] transform disabled:opacity-50 disabled:cursor-not-allowed">
+                  <button className="pf-btn bg-pf-green text-black hover:bg-[#12c77c] disabled:opacity-50 disabled:cursor-not-allowed">
                     Plan a Trip
                   </button>
                 </Link>
-                <Link to="/about" className="text-sm text-gray-300 pf-focus" tabIndex={0}>
+                <Link to="/about" className="text-sm text-[#d9efe6] hover:text-[#14c47b] pf-focus" tabIndex={0}>
                   Learn more
                 </Link>
               </div>
@@ -359,12 +359,12 @@ const Index = () => {
         </section>
       </main>
 
-      <footer className="border-t border-border/70 bg-panel-bg/70 py-10">
+      <footer className="border-t border-[#1d3a2f] bg-[#0f1412] py-10">
         <div className="container mx-auto px-4 text-center">
-          <p className="text-sm text-muted-foreground">Â© 2024 PathFinder Shillong. All demo rights reserved.</p>
+          <p className="text-sm text-[#d9efe6]">© 2024 PathFinder Shillong. All demo rights reserved.</p>
           <div className="mt-3 flex items-center justify-center gap-2">
             <Badge variant="demo">Demo mode</Badge>
-            <span className="text-sm text-muted-foreground">Sample data only</span>
+            <span className="text-sm text-[#d9efe6]">Sample data only</span>
           </div>
         </div>
       </footer>

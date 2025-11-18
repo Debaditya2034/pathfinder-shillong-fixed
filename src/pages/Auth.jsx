@@ -82,16 +82,16 @@ const Auth = () => {
   };
 
   return (
-    <div className="min-h-screen flex items-center justify-center bg-gradient-to-br from-primary/5 via-background to-secondary/10 p-4">
-      <Card className="w-full max-w-md shadow-xl">
+    <div className="min-h-screen flex items-center justify-center bg-[#0b0f0c] p-4">
+      <Card className="w-full max-w-md shadow-xl bg-[#14221c] border border-[#1d3a2f]">
         <CardHeader className="text-center">
           <div className="flex justify-center mb-4">
             <Link to="/">
               <Mountain className="h-12 w-12 text-primary" />
             </Link>
           </div>
-          <CardTitle className="text-2xl">PathFinder Shillong</CardTitle>
-          <CardDescription>
+          <CardTitle className="text-2xl text-[#e3f5ec]">PathFinder Shillong</CardTitle>
+          <CardDescription className="text-[#d9efe6]">
             {mode === "login" ? "Welcome back!" : "Create your account"}
           </CardDescription>
         </CardHeader>
@@ -105,7 +105,7 @@ const Auth = () => {
             <TabsContent value="login">
               <form onSubmit={handleSubmit} className="space-y-4">
                 <div className="space-y-2">
-                  <Label htmlFor="email">Email</Label>
+                  <Label htmlFor="email" className="text-[#e3f5ec]">Email</Label>
                   <Input
                     id="email"
                     type="email"
@@ -113,10 +113,11 @@ const Auth = () => {
                     value={email}
                     onChange={(e) => setEmail(e.target.value)}
                     required
+                    className="bg-[#0f1412] border-[#1d3a2f] text-[#e8f6ef]"
                   />
                 </div>
                 <div className="space-y-2">
-                  <Label htmlFor="password">Password</Label>
+                  <Label htmlFor="password" className="text-[#e3f5ec]">Password</Label>
                   <Input
                     id="password"
                     type="password"
@@ -124,9 +125,10 @@ const Auth = () => {
                     value={password}
                     onChange={(e) => setPassword(e.target.value)}
                     required
+                    className="bg-[#0f1412] border-[#1d3a2f] text-[#e8f6ef]"
                   />
                 </div>
-                <Button type="submit" className="w-full" disabled={loading}>
+                <Button type="submit" className="w-full bg-pf-green text-black hover:bg-[#12c77c]" disabled={loading}>
                   {loading ? "Logging in..." : "Login"}
                 </Button>
               </form>
@@ -135,7 +137,7 @@ const Auth = () => {
             <TabsContent value="signup">
               <form onSubmit={handleSubmit} className="space-y-4">
                 <div className="space-y-2">
-                  <Label htmlFor="signup-email">Email</Label>
+                  <Label htmlFor="signup-email" className="text-[#e3f5ec]">Email</Label>
                   <Input
                     id="signup-email"
                     type="email"
@@ -143,10 +145,11 @@ const Auth = () => {
                     value={email}
                     onChange={(e) => setEmail(e.target.value)}
                     required
+                    className="bg-[#0f1412] border-[#1d3a2f] text-[#e8f6ef]"
                   />
                 </div>
                 <div className="space-y-2">
-                  <Label htmlFor="signup-phone">Phone (for SMS OTP)</Label>
+                  <Label htmlFor="signup-phone" className="text-[#e3f5ec]">Phone (for SMS OTP)</Label>
                   <Input
                     id="signup-phone"
                     type="tel"
@@ -157,11 +160,12 @@ const Auth = () => {
                     value={phone}
                     onChange={(e) => setPhone(e.target.value.replace(/\D/g, ""))}
                     required
+                    className="bg-[#0f1412] border-[#1d3a2f] text-[#e8f6ef]"
                   />
-                  {role === "admin" && <p className="text-xs text-muted-foreground">Admin numbers must be exactly 10 digits.</p>}
+                  {role === "admin" && <p className="text-xs text-[#d9efe6]">Admin numbers must be exactly 10 digits.</p>}
                 </div>
                 <div className="space-y-2">
-                  <Label htmlFor="signup-password">Password</Label>
+                  <Label htmlFor="signup-password" className="text-[#e3f5ec]">Password</Label>
                   <Input
                     id="signup-password"
                     type="password"
@@ -170,25 +174,26 @@ const Auth = () => {
                     value={password}
                     onChange={(e) => setPassword(e.target.value)}
                     required
+                    className="bg-[#0f1412] border-[#1d3a2f] text-[#e8f6ef]"
                   />
-                  {role === "admin" && <p className="text-xs text-muted-foreground">Admin password must be exactly 10 characters.</p>}
+                  {role === "admin" && <p className="text-xs text-[#d9efe6]">Admin password must be exactly 10 characters.</p>}
                 </div>
                 <div className="space-y-2">
-                  <Label htmlFor="role">I am a</Label>
-                  <select id="role" value={role} onChange={(e) => setRole(e.target.value)} className="w-full px-3 py-2 rounded-md border border-input bg-background">
+                  <Label htmlFor="role" className="text-[#e3f5ec]">I am a</Label>
+                  <select id="role" value={role} onChange={(e) => setRole(e.target.value)} className="w-full px-3 py-2 rounded-md border border-[#1d3a2f] bg-[#0f1412] text-[#e8f6ef]">
                     <option value="tourist">Tourist</option>
                     <option value="driver">Driver/Guide</option>
                     <option value="admin">Admin</option>
                   </select>
                 </div>
-                <Button type="submit" className="w-full" disabled={loading}>
+                <Button type="submit" className="w-full bg-pf-green text-black hover:bg-[#12c77c]" disabled={loading}>
                   {loading ? "Creating account..." : "Sign Up"}
                 </Button>
               </form>
             </TabsContent>
           </Tabs>
           
-          <div className="mt-4 text-center text-sm text-muted-foreground">
+          <div className="mt-4 text-center text-sm text-[#d9efe6]">
             <p>DEMO MODE - Any credentials work</p>
           </div>
         </CardContent>

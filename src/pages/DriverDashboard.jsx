@@ -77,103 +77,103 @@ const DriverDashboard = () => {
   if (!user) return null;
 
   return (
-    <div className="min-h-screen bg-background">
+    <div className="min-h-screen bg-[#0b0f0c]">
       <Navbar user={user} onLogout={() => {
         localStorage.removeItem("pathfinder_user");
         navigate("/");
       }} />
       
       <div className="container mx-auto px-4 py-24">
-        <h1 className="text-4xl font-bold mb-8">Driver Dashboard</h1>
+        <h1 className="text-4xl font-bold mb-8 text-[#e3f5ec]">Driver Dashboard</h1>
 
         {/* Stats */}
         <div className="grid md:grid-cols-2 lg:grid-cols-4 gap-6 mb-8">
-          <Card>
+          <Card className="bg-[#14221c] border border-[#1d3a2f]">
             <CardContent className="pt-6">
               <div className="flex items-center justify-between">
                 <div>
-                  <p className="text-sm text-muted-foreground">Trips Accepted</p>
-                  <p className="text-3xl font-bold">{stats.accepted || 0}</p>
+                  <p className="text-sm text-[#d9efe6]">Trips Accepted</p>
+                  <p className="text-3xl font-bold text-[#e3f5ec]">{stats.accepted || 0}</p>
                 </div>
-                <CheckCircle className="h-8 w-8 text-primary" aria-hidden="true" />
+                <CheckCircle className="h-8 w-8 text-pf-green" aria-hidden="true" />
               </div>
             </CardContent>
           </Card>
-          <Card>
+          <Card className="bg-[#14221c] border border-[#1d3a2f]">
             <CardContent className="pt-6">
               <div className="flex items-center justify-between">
                 <div>
-                  <p className="text-sm text-muted-foreground">Completed</p>
-                  <p className="text-3xl font-bold">{stats.completed || 0}</p>
+                  <p className="text-sm text-[#d9efe6]">Completed</p>
+                  <p className="text-3xl font-bold text-[#e3f5ec]">{stats.completed || 0}</p>
                 </div>
-                <CheckCircle className="h-8 w-8 text-success" aria-hidden="true" />
+                <CheckCircle className="h-8 w-8 text-pf-green" aria-hidden="true" />
               </div>
             </CardContent>
           </Card>
-          <Card>
+          <Card className="bg-[#14221c] border border-[#1d3a2f]">
             <CardContent className="pt-6">
               <div className="flex items-center justify-between">
                 <div>
-                  <p className="text-sm text-muted-foreground">Pending</p>
-                  <p className="text-3xl font-bold">{stats.pending || 0}</p>
+                  <p className="text-sm text-[#d9efe6]">Pending</p>
+                  <p className="text-3xl font-bold text-[#e3f5ec]">{stats.pending || 0}</p>
                 </div>
-                <Car className="h-8 w-8 text-warning" aria-hidden="true" />
+                <Car className="h-8 w-8 text-pf-green" aria-hidden="true" />
               </div>
             </CardContent>
           </Card>
-          <Card>
+          <Card className="bg-[#14221c] border border-[#1d3a2f]">
             <CardContent className="pt-6">
               <div className="flex items-center justify-between">
                 <div>
-                  <p className="text-sm text-muted-foreground">Total Earnings</p>
-                  <p className="text-3xl font-bold">₹{stats.earnings.toLocaleString('en-IN') || 0}</p>
+                  <p className="text-sm text-[#d9efe6]">Total Earnings</p>
+                  <p className="text-3xl font-bold text-[#e3f5ec]">₹{stats.earnings.toLocaleString('en-IN') || 0}</p>
                 </div>
-                <IndianRupee className="h-8 w-8 text-success" aria-hidden="true" />
+                <IndianRupee className="h-8 w-8 text-pf-green" aria-hidden="true" />
               </div>
             </CardContent>
           </Card>
         </div>
 
         {/* Bookings */}
-        <Card>
+        <Card className="bg-[#14221c] border border-[#1d3a2f]">
           <CardHeader>
-            <CardTitle>Available Bookings</CardTitle>
+            <CardTitle className="text-[#e3f5ec]">Available Bookings</CardTitle>
           </CardHeader>
           <CardContent>
             {bookings.length === 0 ? (
-              <p className="text-center text-muted-foreground py-8">No bookings available</p>
+              <p className="text-center text-[#d9efe6] py-8">No bookings available</p>
             ) : (
               <div className="space-y-4">
                 {bookings.map((booking) => (
-                  <Card key={booking.id} className="border-2">
+                  <Card key={booking.id} className="border-2 border-[#1d3a2f] bg-[#0f1412]">
                     <CardContent className="pt-6">
                       <div className="space-y-4">
                         <div className="flex items-start justify-between">
                           <div className="flex-grow">
-                            <p className="font-semibold text-lg mb-2">Booking #{booking.id}</p>
+                            <p className="font-semibold text-lg mb-2 text-[#e3f5ec]">Booking #{booking.id}</p>
                             <div className="space-y-2">
-                              <div className="flex items-center gap-2 text-sm">
-                                <MapPin className="h-4 w-4 text-primary" />
+                              <div className="flex items-center gap-2 text-sm text-[#d9efe6]">
+                                <MapPin className="h-4 w-4 text-pf-green" aria-hidden="true" />
                                 <span>{booking.totalDistance} km route</span>
                               </div>
-                              <div className="flex items-center gap-2 text-sm">
-                                <Calendar className="h-4 w-4 text-primary" />
+                              <div className="flex items-center gap-2 text-sm text-[#d9efe6]">
+                                <Calendar className="h-4 w-4 text-pf-green" aria-hidden="true" />
                                 <span>{new Date(booking.scheduledDate).toLocaleDateString()}</span>
                               </div>
-                              <div className="flex items-center gap-2 text-sm">
-                                <Car className="h-4 w-4 text-primary" />
+                              <div className="flex items-center gap-2 text-sm text-[#d9efe6]">
+                                <Car className="h-4 w-4 text-pf-green" aria-hidden="true" />
                                 <span className="capitalize">{booking.vehicleType}</span>
                               </div>
                             </div>
                           </div>
                           <div className="text-right">
-                            <p className="text-2xl font-bold text-primary">
+                            <p className="text-2xl font-bold text-pf-green">
                               {formatCurrency(booking.estimatedCost)}
                             </p>
                             <span className={`inline-block px-2 py-1 rounded text-xs mt-2 ${
-                              booking.status === "pending" ? "bg-yellow-100 text-yellow-800" :
-                              booking.status === "accepted" ? "bg-green-100 text-green-800" :
-                              "bg-gray-100 text-gray-800"
+                              booking.status === "pending" ? "bg-yellow-900/30 text-yellow-300 border border-yellow-700/50" :
+                              booking.status === "accepted" ? "bg-pf-green/20 text-pf-green border border-pf-green/50" :
+                              "bg-[#0f1412] text-[#d9efe6] border border-[#1d3a2f]"
                             }`}>
                               {booking.status}
                             </span>
@@ -181,30 +181,30 @@ const DriverDashboard = () => {
                         </div>
 
                         {booking.status === "pending" && (
-                          <div className="flex gap-3 pt-4 border-t">
+                          <div className="flex gap-3 pt-4 border-t border-[#1d3a2f]">
                             <Button
-                              className="flex-1"
+                              className="flex-1 bg-pf-green text-black hover:bg-[#12c77c]"
                               onClick={() => handleAcceptBooking(booking.id)}
                             >
-                              <CheckCircle className="mr-2 h-4 w-4" />
+                              <CheckCircle className="mr-2 h-4 w-4" aria-hidden="true" />
                               Accept
                             </Button>
                             <Button
                               variant="outline"
-                              className="flex-1"
+                              className="flex-1 border-[#1d3a2f] text-[#e8f6ef] hover:bg-[#14221c] hover:border-pf-green"
                               onClick={() => handleDeclineBooking(booking.id)}
                             >
-                              <X className="mr-2 h-4 w-4" />
+                              <X className="mr-2 h-4 w-4" aria-hidden="true" />
                               Decline
                             </Button>
                           </div>
                         )}
 
                         {booking.status === "accepted" && booking.driverCode && (
-                          <div className="bg-primary/5 p-4 rounded-lg mt-4">
-                            <p className="text-sm font-medium mb-1">Your Driver Code</p>
-                            <p className="text-2xl font-bold text-primary">{booking.driverCode}</p>
-                            <p className="text-xs text-muted-foreground mt-1">
+                          <div className="bg-pf-green/10 p-4 rounded-lg mt-4 border border-pf-green/20">
+                            <p className="text-sm font-medium mb-1 text-[#e3f5ec]">Your Driver Code</p>
+                            <p className="text-2xl font-bold text-pf-green">{booking.driverCode}</p>
+                            <p className="text-xs text-[#d9efe6] mt-1">
                               Show this code to the customer at pickup
                             </p>
                           </div>

@@ -25,10 +25,10 @@ const About = () => {
         {/* Hero Section */}
         <section className="container mx-auto px-4 md:px-8 mb-16">
           <div className="max-w-3xl mx-auto text-center">
-            <h1 className="text-2xl md:text-3xl font-semibold mb-6 text-white">
+            <h1 className="text-2xl md:text-3xl font-semibold mb-6 text-[#e3f5ec]">
               About PathFinder Shillong
             </h1>
-            <p className="text-sm md:text-base leading-relaxed text-gray-200">
+            <p className="text-sm md:text-base leading-relaxed text-[#d9efe6]">
               Connecting travelers with trusted local drivers to explore the breathtaking beauty of Meghalaya.
             </p>
           </div>
@@ -36,15 +36,15 @@ const About = () => {
 
         {/* Mission Section */}
         <section className="container mx-auto px-4 md:px-8 mb-16">
-          <Card className="bg-pf-muted border-gray-700 shadow-lg">
+          <Card className="bg-[#14221c] border border-[#1d3a2f] shadow-lg">
             <CardContent className="p-6 md:p-12">
-              <h2 className="text-2xl md:text-3xl font-semibold mb-6 text-white">Our Mission</h2>
-              <p className="text-sm md:text-base leading-relaxed text-gray-200 mb-4">
+              <h2 className="text-2xl md:text-3xl font-semibold mb-6 text-[#e3f5ec]">Our Mission</h2>
+              <p className="text-sm md:text-base leading-relaxed text-[#d9efe6] mb-4">
                 PathFinder Shillong was born from a simple idea: make exploring Meghalaya as authentic and stress-free 
                 as possible. We believe that the best travel experiences come from connecting with local people who 
                 know the land, the culture, and the hidden gems that guidebooks can't capture.
               </p>
-              <p className="text-sm md:text-base leading-relaxed text-gray-200">
+              <p className="text-sm md:text-base leading-relaxed text-[#d9efe6]">
                 Our platform bridges the gap between travelers seeking authentic experiences and local drivers who 
                 are passionate about sharing their homeland. Every booking is verified, every route is optimized, 
                 and every journey is designed to create lasting memories.
@@ -55,39 +55,39 @@ const About = () => {
 
         {/* Values Section */}
         <section className="container mx-auto px-4 md:px-8 mb-16">
-          <h2 className="text-2xl md:text-3xl font-semibold mb-8 text-center text-white">Our Values</h2>
+          <h2 className="text-2xl md:text-3xl font-semibold mb-8 text-center text-[#e3f5ec]">Our Values</h2>
           <div className="grid md:grid-cols-3 gap-6">
-            <Card className="bg-pf-muted border-gray-700 shadow-md transition-all hover:shadow-lg hover:-translate-y-1 min-h-[120px]">
+            <Card className="bg-[#14221c] border border-[#1d3a2f] shadow-md transition-all hover:shadow-lg hover:-translate-y-1 min-h-[120px]">
               <CardContent className="p-6">
                 <div className="flex items-center justify-center w-14 h-14 rounded-full bg-pf-green/20 text-pf-green mb-4">
                   <Heart className="h-7 w-7" aria-hidden="true" />
                 </div>
-                <h3 className="text-lg font-semibold mb-3 text-white">Authenticity</h3>
-                <p className="text-sm leading-relaxed text-gray-200">
+                <h3 className="text-lg font-semibold mb-3 text-[#e3f5ec]">Authenticity</h3>
+                <p className="text-sm leading-relaxed text-[#d9efe6]">
                   We prioritize genuine local experiences over tourist traps, ensuring every journey feels real and meaningful.
                 </p>
               </CardContent>
             </Card>
 
-            <Card className="bg-pf-muted border-gray-700 shadow-md transition-all hover:shadow-lg hover:-translate-y-1 min-h-[120px]">
+            <Card className="bg-[#14221c] border border-[#1d3a2f] shadow-md transition-all hover:shadow-lg hover:-translate-y-1 min-h-[120px]">
               <CardContent className="p-6">
                 <div className="flex items-center justify-center w-14 h-14 rounded-full bg-pf-green/20 text-pf-green mb-4">
                   <Users className="h-7 w-7" aria-hidden="true" />
                 </div>
-                <h3 className="text-lg font-semibold mb-3 text-white">Trust & Safety</h3>
-                <p className="text-sm leading-relaxed text-gray-200">
+                <h3 className="text-lg font-semibold mb-3 text-[#e3f5ec]">Trust & Safety</h3>
+                <p className="text-sm leading-relaxed text-[#d9efe6]">
                   Every driver is verified, every vehicle is checked, and every booking is secured with dual verification codes.
                 </p>
               </CardContent>
             </Card>
 
-            <Card className="bg-pf-muted border-gray-700 shadow-md transition-all hover:shadow-lg hover:-translate-y-1 min-h-[120px]">
+            <Card className="bg-[#14221c] border border-[#1d3a2f] shadow-md transition-all hover:shadow-lg hover:-translate-y-1 min-h-[120px]">
               <CardContent className="p-6">
                 <div className="flex items-center justify-center w-14 h-14 rounded-full bg-pf-green/20 text-pf-green mb-4">
                   <MapPin className="h-7 w-7" aria-hidden="true" />
                 </div>
-                <h3 className="text-lg font-semibold mb-3 text-white">Local Expertise</h3>
-                <p className="text-sm leading-relaxed text-gray-200">
+                <h3 className="text-lg font-semibold mb-3 text-[#e3f5ec]">Local Expertise</h3>
+                <p className="text-sm leading-relaxed text-[#d9efe6]">
                   Our drivers are locals who know the best routes, weather patterns, and hidden spots that make Meghalaya special.
                 </p>
               </CardContent>
@@ -97,13 +97,13 @@ const About = () => {
 
         {/* Service Areas */}
         <section className="container mx-auto px-4 md:px-8 mb-16">
-          <Card className="bg-pf-muted border-gray-700 shadow-lg">
+          <Card className="bg-[#14221c] border border-[#1d3a2f] shadow-lg">
             <CardContent className="p-6 md:p-12">
-              <h2 className="text-2xl md:text-3xl font-semibold mb-6 text-white">Service Areas</h2>
-              <p className="text-sm md:text-base leading-relaxed text-gray-200 mb-6">
+              <h2 className="text-2xl md:text-3xl font-semibold mb-6 text-[#e3f5ec]">Service Areas</h2>
+              <p className="text-sm md:text-base leading-relaxed text-[#d9efe6] mb-6">
                 We currently serve the following areas in Meghalaya:
               </p>
-              <ul className="space-y-3 text-sm md:text-base text-gray-200" role="list">
+              <ul className="space-y-3 text-sm md:text-base text-[#d9efe6]" role="list">
                 <li className="flex items-start">
                   <span className="mr-3 text-pf-green" aria-hidden="true">•</span>
                   <span>Shillong and surrounding areas</span>
@@ -139,10 +139,10 @@ const About = () => {
 
         {/* Contact Section */}
         <section className="container mx-auto px-4 md:px-8 mb-16">
-          <Card className="bg-gradient-to-br from-pf-green/10 to-pf-green/5 border-pf-green/30 shadow-lg">
+          <Card className="bg-[#14221c] border border-pf-green/30 shadow-lg">
             <CardContent className="p-6 md:p-12">
-              <h2 className="text-2xl md:text-3xl font-semibold mb-6 text-white">Get in Touch</h2>
-              <p className="text-sm md:text-base leading-relaxed text-gray-200 mb-8">
+              <h2 className="text-2xl md:text-3xl font-semibold mb-6 text-[#e3f5ec]">Get in Touch</h2>
+              <p className="text-sm md:text-base leading-relaxed text-[#d9efe6] mb-8">
                 Have questions or need assistance? We're here to help you plan your perfect Meghalaya adventure.
               </p>
               <div className="grid md:grid-cols-2 gap-6">
@@ -151,9 +151,9 @@ const About = () => {
                     <Phone className="h-6 w-6" aria-hidden="true" />
                   </div>
                   <div>
-                    <h3 className="font-semibold text-lg mb-2 text-white">Phone</h3>
-                    <p className="text-gray-200">+91 XXX XXX XXXX</p>
-                    <p className="text-xs text-gray-300 mt-1">Available 9 AM - 8 PM IST</p>
+                    <h3 className="font-semibold text-lg mb-2 text-[#e3f5ec]">Phone</h3>
+                    <p className="text-[#d9efe6]">+91 XXX XXX XXXX</p>
+                    <p className="text-xs text-[#d9efe6] mt-1">Available 9 AM - 8 PM IST</p>
                   </div>
                 </div>
                 <div className="flex items-start gap-4">
@@ -161,9 +161,9 @@ const About = () => {
                     <Mail className="h-6 w-6" aria-hidden="true" />
                   </div>
                   <div>
-                    <h3 className="font-semibold text-lg mb-2 text-white">Email</h3>
-                    <p className="text-gray-200">support@pathfindershillong.com</p>
-                    <p className="text-xs text-gray-300 mt-1">We respond within 24 hours</p>
+                    <h3 className="font-semibold text-lg mb-2 text-[#e3f5ec]">Email</h3>
+                    <p className="text-[#d9efe6]">support@pathfindershillong.com</p>
+                    <p className="text-xs text-[#d9efe6] mt-1">We respond within 24 hours</p>
                   </div>
                 </div>
               </div>
@@ -173,10 +173,10 @@ const About = () => {
 
         {/* Demo Mode Notice */}
         <section className="container mx-auto px-4 md:px-8">
-          <Card className="bg-pf-muted/50 border-yellow-500/30 shadow-lg">
+          <Card className="bg-[#14221c] border border-yellow-500/30 shadow-lg">
             <CardContent className="p-6 text-center">
               <p className="text-sm md:text-base text-yellow-300 font-semibold mb-2">DEMO MODE</p>
-              <p className="text-xs md:text-sm text-gray-300">
+              <p className="text-xs md:text-sm text-[#d9efe6]">
                 This is a demonstration version. No real payments are processed. All bookings and data are stored locally.
               </p>
             </CardContent>
@@ -184,9 +184,9 @@ const About = () => {
         </section>
       </main>
 
-      <footer className="border-t border-gray-700 bg-pf-muted py-10 md:py-12" role="contentinfo">
+      <footer className="border-t border-[#1d3a2f] bg-[#0f1412] py-10 md:py-12" role="contentinfo">
         <div className="container mx-auto px-4 text-center">
-          <p className="text-sm md:text-base text-gray-300">© 2024 PathFinder Shillong. All demo rights reserved.</p>
+          <p className="text-sm md:text-base text-[#d9efe6]">© 2024 PathFinder Shillong. All demo rights reserved.</p>
         </div>
       </footer>
     </div>

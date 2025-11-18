@@ -70,6 +70,17 @@ const config = {
           ring: "hsl(var(--sidebar-ring))",
         },
       },
+      boxShadow: {
+        "panel-soft": "0 25px 65px rgba(15, 90, 54, 0.12)",
+        glow: "0 0 45px rgba(255, 184, 77, 0.35)",
+      },
+      backgroundImage: {
+        "panel-texture": "radial-gradient(circle at 10% 20%, rgba(15,90,54,.08), transparent 60%)",
+        "hero-radial": "radial-gradient(circle at top, rgba(4,31,18,.92), rgba(15,90,54,.85))",
+      },
+      transitionTimingFunction: {
+        "pf-smooth": "cubic-bezier(0.22, 0.9, 0.3, 1)",
+      },
       borderRadius: {
         lg: "var(--radius)",
         md: "calc(var(--radius) - 2px)",

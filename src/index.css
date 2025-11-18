@@ -1,0 +1,165 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+/* Definition of the design system. All colors, gradients, fonts, etc should be defined here. 
+All colors MUST be HSL.
+*/
+
+@layer base {
+  :root {
+    --background: 60 14% 96%;
+    --foreground: 151 40% 14%;
+
+    --card: 0 0% 100%;
+    --card-foreground: 151 40% 14%;
+
+    --popover: 0 0% 100%;
+    --popover-foreground: 151 40% 14%;
+
+    --primary: 151 82% 23%;
+    --primary-foreground: 0 0% 100%;
+
+    --secondary: 151 20% 90%;
+    --secondary-foreground: 151 40% 14%;
+
+    --muted: 151 15% 94%;
+    --muted-foreground: 151 10% 46%;
+
+    --accent: 45 78% 51%;
+    --accent-foreground: 151 40% 14%;
+
+    --destructive: 0 72% 51%;
+    --destructive-foreground: 0 0% 100%;
+
+    --border: 151 20% 90%;
+    --input: 151 20% 90%;
+    --ring: 151 82% 23%;
+
+    --success: 142 71% 45%;
+    --warning: 38 92% 50%;
+    --info: 217 91% 60%;
+
+    --radius: 0.5rem;
+
+    --gradient-primary: linear-gradient(135deg, hsl(151 82% 23%), hsl(151 82% 31%));
+    --gradient-hero: linear-gradient(135deg, hsl(151 82% 23% / 0.92), hsl(151 70% 15% / 0.88));
+    --gradient-accent: linear-gradient(135deg, hsl(45 78% 51%), hsl(45 75% 42%));
+    --shadow-sm: 0 1px 2px 0 hsl(151 82% 23% / 0.05);
+    --shadow-md: 0 4px 6px -1px hsl(151 82% 23% / 0.1), 0 2px 4px -1px hsl(151 82% 23% / 0.06);
+    --shadow-lg: 0 10px 15px -3px hsl(151 82% 23% / 0.1), 0 4px 6px -2px hsl(151 82% 23% / 0.05);
+    --shadow-xl: 0 20px 25px -5px hsl(151 82% 23% / 0.1), 0 10px 10px -5px hsl(151 82% 23% / 0.04);
+    --shadow-glow: 0 0 20px hsl(45 78% 51% / 0.3);
+    --transition-smooth: all 0.2s cubic-bezier(0.4, 0, 0.2, 1);
+
+    --sidebar-background: 0 0% 98%;
+
+    --sidebar-foreground: 240 5.3% 26.1%;
+
+    --sidebar-primary: 240 5.9% 10%;
+
+    --sidebar-primary-foreground: 0 0% 98%;
+
+    --sidebar-accent: 240 4.8% 95.9%;
+
+    --sidebar-accent-foreground: 240 5.9% 10%;
+
+    --sidebar-border: 220 13% 91%;
+
+    --sidebar-ring: 217.2 91.2% 59.8%;
+  }
+
+  .dark {
+    --background: 151 40% 8%;
+    --foreground: 151 20% 95%;
+
+    --card: 151 35% 10%;
+    --card-foreground: 151 20% 95%;
+
+    --popover: 151 35% 10%;
+    --popover-foreground: 151 20% 95%;
+
+    --primary: 151 82% 31%;
+    --primary-foreground: 0 0% 100%;
+
+    --secondary: 151 25% 15%;
+    --secondary-foreground: 151 20% 95%;
+
+    --muted: 151 25% 15%;
+    --muted-foreground: 151 20% 65%;
+
+    --accent: 45 78% 51%;
+    --accent-foreground: 151 40% 14%;
+
+    --destructive: 0 72% 51%;
+    --destructive-foreground: 0 0% 100%;
+
+    --border: 151 25% 20%;
+    --input: 151 25% 20%;
+    --ring: 151 82% 31%;
+
+    --success: 142 71% 45%;
+    --warning: 38 92% 50%;
+    --info: 217 91% 60%;
+    
+    --gradient-primary: linear-gradient(135deg, hsl(151 82% 23%), hsl(151 82% 31%));
+    --gradient-hero: linear-gradient(135deg, hsl(151 82% 18% / 0.92), hsl(151 70% 12% / 0.88));
+    --gradient-accent: linear-gradient(135deg, hsl(45 78% 51%), hsl(45 75% 42%));
+    --shadow-glow: 0 0 20px hsl(45 78% 51% / 0.2);
+    --sidebar-background: 240 5.9% 10%;
+    --sidebar-foreground: 240 4.8% 95.9%;
+    --sidebar-primary: 224.3 76.3% 48%;
+    --sidebar-primary-foreground: 0 0% 100%;
+    --sidebar-accent: 240 3.7% 15.9%;
+    --sidebar-accent-foreground: 240 4.8% 95.9%;
+    --sidebar-border: 240 3.7% 15.9%;
+    --sidebar-ring: 217.2 91.2% 59.8%;
+  }
+}
+
+@layer base {
+  * {
+    @apply border-border;
+  }
+
+  body {
+    @apply bg-background text-foreground;
+    font-family: 'Inter', system-ui, -apple-system, sans-serif;
+  }
+
+  h1, h2, h3, h4, h5, h6 {
+    font-family: 'Sora', 'Inter', sans-serif;
+  }
+}
+
+@layer utilities {
+  .animate-pulse-glow {
+    animation: pulse-glow 2s cubic-bezier(0.4, 0, 0.6, 1) infinite;
+  }
+
+  .hover-lift {
+    transition: var(--transition-smooth);
+  }
+
+  .hover-lift:hover {
+    transform: translateY(-4px);
+    box-shadow: var(--shadow-lg);
+  }
+
+  .card-shadow {
+    box-shadow: var(--shadow-md);
+  }
+
+  .shadow-glow {
+    box-shadow: var(--shadow-glow);
+  }
+}
+
+@keyframes pulse-glow {
+  0%, 100% {
+    box-shadow: 0 0 0 0 hsl(var(--accent) / 0.4);
+  }
+  50% {
+    box-shadow: 0 0 0 8px hsl(var(--accent) / 0);
+  }
+}

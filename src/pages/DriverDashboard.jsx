@@ -1,223 +1,333 @@
-import { useState, useEffect } from "react";
+// src/pages/DriverDashboard.jsx
+import { useState, useEffect, useRef } from "react";
 import { useNavigate } from "react-router-dom";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Navbar } from "@/components/Navbar";
-import { Car, MapPin, Calendar, CheckCircle, X, IndianRupee } from "lucide-react";
-import { formatCurrency, generateBookingCode } from "@/lib/utils";
+import { formatCurrency } from "@/lib/utils";
 import { toast } from "sonner";
+
+import { auth, db } from "@/firebase";
+import { onAuthStateChanged } from "firebase/auth";
+import {
+  collection,
+  query,
+  where,
+  getDocs,
+  updateDoc,
+  doc,
+  serverTimestamp,
+  orderBy,
+  onSnapshot,
+  runTransaction,
+} from "firebase/firestore";
 
 const DriverDashboard = () => {
   const navigate = useNavigate();
   const [user, setUser] = useState(null);
-  const [bookings, setBookings] = useState([]);
-  const [stats, setStats] = useState({ total: 0, accepted: 0, completed: 0, pending: 0, earnings: 0 });
+  const [bookings, setBookings] = useState([]); // combined assigned + open
+  const [stats, setStats] = useState({
+    total: 0,
+    accepted: 0,
+    completed: 0,
+    pending: 0,
+    earnings: 0,
+  });
+  const [driverProfile, setDriverProfile] = useState(null);
+  const [vehicles, setVehicles] = useState([]);
+  const [loading, setLoading] = useState(false);
+
+  // refs to unsubscribe listeners
+  const assignedUnsubRef = useRef(null);
+  const openUnsubRef = useRef(null);
+
+  // compute stats from a list of trips
+  function computeStats(trips, uid) {
+    const total = trips.length;
+    const accepted = trips.filter(x => x.status === "assigned" || x.driverId === uid).length;
+    const completed = trips.filter(x => x.status === "completed").length;
+    const pending = trips.filter(x => x.status === "requested").length;
+    const earnings = trips.reduce((acc, cur) => acc + (cur.finalFare || cur.fareEstimate || 0), 0);
+    return { total, accepted, completed, pending, earnings };
+  }
 
   useEffect(() => {
-    const userData = localStorage.getItem("pathfinder_user");
-    if (!userData) {
-      navigate("/auth");
-      return;
-    }
+    // Listen for auth state
+    const unsubAuth = onAuthStateChanged(auth, async (u) => {
+      // clear any previous listeners
+      assignedUnsubRef.current && assignedUnsubRef.current();
+      openUnsubRef.current && openUnsubRef.current();
 
-    const parsedUser = JSON.parse(userData);
-    if (parsedUser.role !== "driver") {
-      navigate("/");
-      return;
-    }
-
-    setUser(parsedUser);
-    loadBookings(parsedUser.uid);
-  }, [navigate]);
-
-  const loadBookings = (driverId) => {
-    const allBookings = JSON.parse(localStorage.getItem("pathfinder_bookings") || "[]");
-    const driverBookings = allBookings.filter((booking) => booking.status === "pending" || booking.driverId === driverId);
-    setBookings(driverBookings);
-
-    // Use analytics utility
-    const analytics = computeDriverAnalytics(allBookings, driverId);
-
-    setStats({
-      total: analytics.total || 0,
-      accepted: analytics.accepted || 0,
-      completed: analytics.completed || 0,
-      pending: analytics.pending || 0,
-      earnings: analytics.earnings || 0,
-    });
-  };
-
-  const handleAcceptBooking = (bookingId) => {
-    const allBookings = JSON.parse(localStorage.getItem("pathfinder_bookings") || "[]");
-    const updatedBookings = allBookings.map((booking) => {
-      if (booking.id === bookingId) {
-        return {
-          ...booking,
-          driverId: user.uid,
-          status: "accepted",
-          driverCode: generateBookingCode(),
-        };
+      if (!u) {
+        setUser(null);
+        setBookings([]);
+        setStats({ total: 0, accepted: 0, completed: 0, pending: 0, earnings: 0 });
+        setDriverProfile(null);
+        setVehicles([]);
+        return;
       }
-      return booking;
+
+      setUser(u);
+
+      try {
+        // fetch driver profile (one-time)
+        const dpCol = collection(db, "driverProfiles");
+        const dpQ = query(dpCol, where("uid", "==", u.uid));
+        const dpSnap = await getDocs(dpQ);
+        const dp = dpSnap.docs.length ? { id: dpSnap.docs[0].id, ...dpSnap.docs[0].data() } : null;
+        setDriverProfile(dp);
+
+        // fetch vehicles (best-effort)
+        let vlist = [];
+        if (dp && Array.isArray(dp.vehicleIds) && dp.vehicleIds.length) {
+          const ids = dp.vehicleIds.slice(0, 10);
+          const vq = query(collection(db, "vehicles"), where("vehicleId", "in", ids));
+          const vsnap = await getDocs(vq);
+          vlist = vsnap.docs.map(d => ({ id: d.id, ...d.data() }));
+        } else {
+          const vq2 = query(collection(db, "vehicles"), where("driverId", "==", dp ? dp.driverId || dp.uid : u.uid));
+          const vsnap2 = await getDocs(vq2);
+          vlist = vsnap2.docs.map(d => ({ id: d.id, ...d.data() }));
+        }
+        setVehicles(vlist);
+
+        // realtime listeners:
+        // 1) assigned to this driver
+        const tripsCol = collection(db, "trips");
+        const assignedQ = query(tripsCol, where("driverId", "==", u.uid), orderBy("requestedAt", "desc"));
+        assignedUnsubRef.current = onSnapshot(assignedQ, (snap) => {
+          const assigned = snap.docs.map(d => ({ id: d.id, ...d.data() }));
+          // merge with any open (if already loaded), assigned should appear first
+          setBookings(prev => {
+            const open = prev.filter(x => x.status === "requested");
+            const combined = [...assigned, ...open];
+            setStats(computeStats(combined, u.uid));
+            return combined;
+          });
+        }, (err) => {
+          console.error("assigned onSnapshot error", err);
+        });
+
+        // 2) open requested trips
+        const openQ = query(tripsCol, where("status", "==", "requested"), orderBy("requestedAt", "desc"));
+        openUnsubRef.current = onSnapshot(openQ, (snap) => {
+          const open = snap.docs.map(d => ({ id: d.id, ...d.data() }));
+          setBookings(prev => {
+            // preserve assigned at top if exists in prev
+            const assigned = prev.filter(x => x.status !== "requested");
+            const combined = [...assigned, ...open];
+            setStats(computeStats(combined, u.uid));
+            return combined;
+          });
+        }, (err) => {
+          console.error("open onSnapshot error", err);
+        });
+
+      } catch (e) {
+        console.error("Error initializing driver dashboard", e);
+        toast.error("Unable to load dashboard data");
+      }
     });
 
-    localStorage.setItem("pathfinder_bookings", JSON.stringify(updatedBookings));
-    loadBookings(user.uid);
-    toast.success("Booking accepted! Customer will be notified.");
-  };
+    return () => {
+      // cleanup auth listener + snapshots
+      unsubAuth();
+      assignedUnsubRef.current && assignedUnsubRef.current();
+      openUnsubRef.current && openUnsubRef.current();
+    };
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, []);
 
-  const handleDeclineBooking = (bookingId) => {
-    const allBookings = JSON.parse(localStorage.getItem("pathfinder_bookings") || "[]");
-    const updatedBookings = allBookings.filter((booking) => booking.id !== bookingId);
-    localStorage.setItem("pathfinder_bookings", JSON.stringify(updatedBookings));
-    loadBookings(user.uid);
-    toast.info("Booking declined");
-  };
+  // Transaction-safe accept
+  async function acceptTrip(trip) {
+    if (!user) return toast.error("Authentication required");
+    // optional: block unverified drivers (if you want this behavior)
+    if (driverProfile && driverProfile.verified === false) {
+      return toast.error("Your driver account is not verified. You cannot accept trips yet.");
+    }
 
-  if (!user) return null;
+    setLoading(true);
+    try {
+      const tripRef = doc(db, "trips", trip.id);
+
+      await runTransaction(db, async (tx) => {
+        const snap = await tx.get(tripRef);
+        if (!snap.exists()) throw new Error("Trip was removed");
+        const data = snap.data();
+        // if already assigned or not requested any more -> abort
+        if (data.status !== "requested" && data.driverId) {
+          throw new Error("Trip already claimed");
+        }
+        // set driverId and assigned status atomically
+        tx.update(tripRef, {
+          driverId: user.uid,
+          status: "assigned",
+          assignedAt: serverTimestamp()
+        });
+      });
+
+      toast.success("Trip accepted");
+      // No need to manually refresh because onSnapshot will emit update
+    } catch (e) {
+      console.error("acceptTrip transaction failed", e);
+      toast.error(e.message || "Failed to accept trip");
+    } finally {
+      setLoading(false);
+    }
+  }
+
+  // Mark completed
+  async function markCompleted(trip) {
+    if (!user) return;
+    setLoading(true);
+    try {
+      const tripRef = doc(db, "trips", trip.id);
+      await updateDoc(tripRef, {
+        status: "completed",
+        completedAt: serverTimestamp(),
+      });
+      toast.success("Trip completed");
+      // onSnapshot will update UI
+    } catch (e) {
+      console.error("markCompleted error", e);
+      toast.error("Failed to complete trip");
+    } finally {
+      setLoading(false);
+    }
+  }
+
+  // small helper to format scheduledFor (handle null or timestamp objects)
+  function formatScheduled(scheduled) {
+    if (!scheduled) return "ASAP";
+    try {
+      // Firestore timestamp object may have seconds
+      if (scheduled.seconds) {
+        return new Date(scheduled.seconds * 1000).toLocaleString();
+      }
+      const d = new Date(scheduled);
+      return d.toLocaleString();
+    } catch {
+      return "ASAP";
+    }
+  }
 
   return (
     <div className="min-h-screen bg-[#0b0f0c]">
-      <Navbar user={user} onLogout={() => {
-        localStorage.removeItem("pathfinder_user");
-        navigate("/");
-      }} />
-      
-      <div className="container mx-auto px-4 py-24">
-        <h1 className="text-4xl font-bold mb-8 text-[#e3f5ec]">Driver Dashboard</h1>
+      <Navbar />
+      <main className="min-h-screen bg-[#0f1412] text-[#e8f6ef] p-4 md:p-8">
+        <div className="max-w-7xl mx-auto grid lg:grid-cols-3 gap-6">
+          {/* Left column: profile + stats */}
+          <div className="lg:col-span-1">
+            <Card className="bg-[#14221c] border border-[#1d3a2f] sticky top-6">
+              <CardHeader>
+                <CardTitle className="text-[#e3f5ec]">Driver Profile</CardTitle>
+              </CardHeader>
+              <CardContent>
+                {driverProfile ? (
+                  <div>
+                    <p className="text-sm text-[#d9efe6]">Name: {driverProfile.name || "—"}</p>
+                    <p className="text-sm text-[#d9efe6]">Verified: {driverProfile.verified ? "Yes" : "No"}</p>
+                    <p className="text-sm text-[#d9efe6]">License: {driverProfile.licenseNumber || "—"}</p>
 
-        {/* Stats */}
-        <div className="grid md:grid-cols-2 lg:grid-cols-4 gap-6 mb-8">
-          <Card className="bg-[#14221c] border border-[#1d3a2f]">
-            <CardContent className="pt-6">
-              <div className="flex items-center justify-between">
-                <div>
-                  <p className="text-sm text-[#d9efe6]">Trips Accepted</p>
-                  <p className="text-3xl font-bold text-[#e3f5ec]">{stats.accepted || 0}</p>
-                </div>
-                <CheckCircle className="h-8 w-8 text-pf-green" aria-hidden="true" />
-              </div>
-            </CardContent>
-          </Card>
-          <Card className="bg-[#14221c] border border-[#1d3a2f]">
-            <CardContent className="pt-6">
-              <div className="flex items-center justify-between">
-                <div>
-                  <p className="text-sm text-[#d9efe6]">Completed</p>
-                  <p className="text-3xl font-bold text-[#e3f5ec]">{stats.completed || 0}</p>
-                </div>
-                <CheckCircle className="h-8 w-8 text-pf-green" aria-hidden="true" />
-              </div>
-            </CardContent>
-          </Card>
-          <Card className="bg-[#14221c] border border-[#1d3a2f]">
-            <CardContent className="pt-6">
-              <div className="flex items-center justify-between">
-                <div>
-                  <p className="text-sm text-[#d9efe6]">Pending</p>
-                  <p className="text-3xl font-bold text-[#e3f5ec]">{stats.pending || 0}</p>
-                </div>
-                <Car className="h-8 w-8 text-pf-green" aria-hidden="true" />
-              </div>
-            </CardContent>
-          </Card>
-          <Card className="bg-[#14221c] border border-[#1d3a2f]">
-            <CardContent className="pt-6">
-              <div className="flex items-center justify-between">
-                <div>
-                  <p className="text-sm text-[#d9efe6]">Total Earnings</p>
-                  <p className="text-3xl font-bold text-[#e3f5ec]">₹{stats.earnings.toLocaleString('en-IN') || 0}</p>
-                </div>
-                <IndianRupee className="h-8 w-8 text-pf-green" aria-hidden="true" />
-              </div>
-            </CardContent>
-          </Card>
-        </div>
+                    <div className="mt-3">
+                      <p className="text-xs text-[#9fd8b8] mb-1">Vehicles</p>
+                      {vehicles.length ? (
+                        vehicles.map((v) => (
+                          <div key={v.id} className="text-sm text-[#e8f6ef] mb-1 border p-2 rounded">
+                            <div>{v.make} {v.model}</div>
+                            <div className="text-xs text-[#cdebd5]">{v.plate} • Cap: {v.capacity}</div>
+                          </div>
+                        ))
+                      ) : (
+                        <p className="text-sm text-muted-foreground">No vehicles registered</p>
+                      )}
+                    </div>
+                  </div>
+                ) : (
+                  <p className="text-sm text-muted-foreground">Driver profile not found. Please complete your profile.</p>
+                )}
+              </CardContent>
+            </Card>
 
-        {/* Bookings */}
-        <Card className="bg-[#14221c] border border-[#1d3a2f]">
-          <CardHeader>
-            <CardTitle className="text-[#e3f5ec]">Available Bookings</CardTitle>
-          </CardHeader>
-          <CardContent>
-            {bookings.length === 0 ? (
-              <p className="text-center text-[#d9efe6] py-8">No bookings available</p>
-            ) : (
-              <div className="space-y-4">
-                {bookings.map((booking) => (
-                  <Card key={booking.id} className="border-2 border-[#1d3a2f] bg-[#0f1412]">
-                    <CardContent className="pt-6">
-                      <div className="space-y-4">
-                        <div className="flex items-start justify-between">
-                          <div className="flex-grow">
-                            <p className="font-semibold text-lg mb-2 text-[#e3f5ec]">Booking #{booking.id}</p>
-                            <div className="space-y-2">
-                              <div className="flex items-center gap-2 text-sm text-[#d9efe6]">
-                                <MapPin className="h-4 w-4 text-pf-green" aria-hidden="true" />
-                                <span>{booking.totalDistance} km route</span>
-                              </div>
-                              <div className="flex items-center gap-2 text-sm text-[#d9efe6]">
-                                <Calendar className="h-4 w-4 text-pf-green" aria-hidden="true" />
-                                <span>{new Date(booking.scheduledDate).toLocaleDateString()}</span>
-                              </div>
-                              <div className="flex items-center gap-2 text-sm text-[#d9efe6]">
-                                <Car className="h-4 w-4 text-pf-green" aria-hidden="true" />
-                                <span className="capitalize">{booking.vehicleType}</span>
+            <Card className="bg-[#14221c] border border-[#1d3a2f] mt-4">
+              <CardHeader>
+                <CardTitle className="text-[#e3f5ec]">Statistics</CardTitle>
+              </CardHeader>
+              <CardContent>
+                <div className="space-y-3">
+                  <div className="text-sm text-[#d9efe6]">Total visible trips</div>
+                  <div className="text-2xl font-bold text-[#e3f5ec]">{stats.total}</div>
+
+                  <div className="text-sm text-[#d9efe6]">Accepted</div>
+                  <div className="text-2xl font-bold text-[#e3f5ec]">{stats.accepted}</div>
+
+                  <div className="text-sm text-[#d9efe6]">Completed</div>
+                  <div className="text-2xl font-bold text-[#e3f5ec]">{stats.completed}</div>
+
+                  <div className="text-sm text-[#d9efe6]">Earnings (est)</div>
+                  <div className="text-2xl font-bold text-[#e3f5ec]">{formatCurrency(stats.earnings || 0)}</div>
+                </div>
+              </CardContent>
+            </Card>
+          </div>
+
+          {/* Right: bookings list */}
+          <div className="lg:col-span-2">
+            <Card className="bg-[#14221c] border border-[#1d3a2f]">
+              <CardHeader>
+                <CardTitle className="text-[#e3f5ec]">Bookings</CardTitle>
+              </CardHeader>
+              <CardContent>
+                {bookings.length === 0 ? (
+                  <p className="text-sm text-muted-foreground">No bookings available.</p>
+                ) : (
+                  <div className="space-y-4">
+                    {bookings.map((b) => (
+                      <Card key={b.id} className="bg-[#0f1412] border border-[#1d3a2f]">
+                        <CardContent className="p-4">
+                          <div className="flex items-start justify-between">
+                            <div>
+                              <p className="text-sm text-[#9fd8b8]">Booking ID: {b.id}</p>
+                              <p className="text-lg font-semibold text-[#e3f5ec]">{b.pickup?.address || (b.stops && b.stops[0]?.address) || "Unknown"}</p>
+                              <p className="text-sm text-[#d9efe6]">{b.dropoff?.address || (b.stops && b.stops[b.stops.length - 1]?.address)}</p>
+                              <p className="text-sm text-[#cdebd5] mt-2">Status: <span className="font-medium">{b.status}</span></p>
+                            </div>
+
+                            <div className="text-right">
+                              <p className="text-sm text-[#d9efe6]">{formatScheduled(b.scheduledFor)}</p>
+                              <p className="text-lg font-bold text-[#e3f5ec]">{formatCurrency(b.finalFare || b.fareEstimate || 0)}</p>
+                              <div className="mt-3 flex flex-col gap-2">
+                                {b.status === "requested" && (
+                                  <Button onClick={() => acceptTrip(b)} disabled={loading}>Accept</Button>
+                                )}
+
+                                {b.status === "assigned" && b.driverId === user?.uid && (
+                                  <>
+                                    <Button onClick={() => navigate(`/trip/${b.id}`)}>Open</Button>
+                                    <Button variant="destructive" onClick={() => markCompleted(b)}>Mark Completed</Button>
+                                  </>
+                                )}
+
+                                {b.status === "assigned" && b.driverId !== user?.uid && (
+                                  <div className="text-xs text-[#cdebd5]">Assigned to another driver</div>
+                                )}
+
+                                {b.status === "completed" && (
+                                  <div className="text-sm text-[#9fd8b8]">Completed</div>
+                                )}
                               </div>
                             </div>
                           </div>
-                          <div className="text-right">
-                            <p className="text-2xl font-bold text-pf-green">
-                              {formatCurrency(booking.estimatedCost)}
-                            </p>
-                            <span className={`inline-block px-2 py-1 rounded text-xs mt-2 ${
-                              booking.status === "pending" ? "bg-yellow-900/30 text-yellow-300 border border-yellow-700/50" :
-                              booking.status === "accepted" ? "bg-pf-green/20 text-pf-green border border-pf-green/50" :
-                              "bg-[#0f1412] text-[#d9efe6] border border-[#1d3a2f]"
-                            }`}>
-                              {booking.status}
-                            </span>
-                          </div>
-                        </div>
-
-                        {booking.status === "pending" && (
-                          <div className="flex gap-3 pt-4 border-t border-[#1d3a2f]">
-                            <Button
-                              className="flex-1 bg-pf-green text-black hover:bg-[#12c77c]"
-                              onClick={() => handleAcceptBooking(booking.id)}
-                            >
-                              <CheckCircle className="mr-2 h-4 w-4" aria-hidden="true" />
-                              Accept
-                            </Button>
-                            <Button
-                              variant="outline"
-                              className="flex-1 border-[#1d3a2f] text-[#e8f6ef] hover:bg-[#14221c] hover:border-pf-green"
-                              onClick={() => handleDeclineBooking(booking.id)}
-                            >
-                              <X className="mr-2 h-4 w-4" aria-hidden="true" />
-                              Decline
-                            </Button>
-                          </div>
-                        )}
-
-                        {booking.status === "accepted" && booking.driverCode && (
-                          <div className="bg-pf-green/10 p-4 rounded-lg mt-4 border border-pf-green/20">
-                            <p className="text-sm font-medium mb-1 text-[#e3f5ec]">Your Driver Code</p>
-                            <p className="text-2xl font-bold text-pf-green">{booking.driverCode}</p>
-                            <p className="text-xs text-[#d9efe6] mt-1">
-                              Show this code to the customer at pickup
-                            </p>
-                          </div>
-                        )}
-                      </div>
-                    </CardContent>
-                  </Card>
-                ))}
-              </div>
-            )}
-          </CardContent>
-        </Card>
-      </div>
+                        </CardContent>
+                      </Card>
+                    ))}
+                  </div>
+                )}
+              </CardContent>
+            </Card>
+          </div>
+        </div>
+      </main>
     </div>
   );
 };

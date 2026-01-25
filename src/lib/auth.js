@@ -1,93 +1,92 @@
-// src/lib/auth.js
-import { auth, db } from "@/firebase";
 import {
   createUserWithEmailAndPassword,
   signInWithEmailAndPassword,
-  signOut as firebaseSignOut,
-  updateProfile,
-  onAuthStateChanged,
-  sendEmailVerification,
-} from "firebase/auth";
-import { doc, setDoc, getDoc } from "firebase/firestore";
+  signOut,
+  sendPasswordResetEmail,
+  onAuthStateChanged
+} from 'firebase/auth';
+import { doc, setDoc, getDoc, serverTimestamp } from 'firebase/firestore';
+import { auth, db } from './firebase';
 
-export async function getUserProfile(uid) {
-  if (!uid) return null;
-  const ref = doc(db, "users", uid);
-  const snap = await getDoc(ref);
-  return snap.exists() ? snap.data() : null;
-}
-
-export async function ensureUserProfile(user, role = "tourist") {
-  if (!user || !user.uid) throw new Error("Invalid user for ensureUserProfile");
-  const ref = doc(db, "users", user.uid);
-  const snap = await getDoc(ref);
-  if (snap.exists()) return snap.data();
-
-  const payload = {
-    uid: user.uid,
-    email: user.email || null,
-    phone: user.phoneNumber || null,
-    role,
-    createdAt: new Date().toISOString()
-  };
-
-  await setDoc(ref, payload, { merge: true });
-  return payload;
-}
-
-export async function signUp({ email, phone, password, role = "tourist" }) {
-  if (!email || !password) throw new Error("Email and password are required");
-  const userCred = await createUserWithEmailAndPassword(auth, email, password);
-  const user = userCred.user;
-
-  try { await updateProfile(user, { displayName: role === "admin" ? "Admin" : "" }); } catch (e) { console.warn("updateProfile warning:", e); }
-
+/**
+ * Sign up a new user
+ */
+export async function signUp(email, password, role = 'tourist') {
   try {
-    await setDoc(doc(db, "users", user.uid), {
+    const userCredential = await createUserWithEmailAndPassword(auth, email, password);
+    const user = userCredential.user;
+
+    // Create user profile in Firestore
+    await setDoc(doc(db, 'users', user.uid), {
       uid: user.uid,
-      email: email || null,
-      phone: phone || null,
-      role,
-      createdAt: new Date().toISOString()
+      email: user.email,
+      role: role,
+      createdAt: serverTimestamp(),
+      updatedAt: serverTimestamp()
     });
-  } catch (e) {
-    console.error("Failed to create user profile doc:", e);
+
+    return { user, role };
+  } catch (error) {
+    throw error;
   }
-
-  try { await sendEmailVerification(user); } catch (e) { console.warn("sendEmailVerification warning:", e); }
-
-  return { user, role };
 }
 
+/**
+ * Sign in an existing user
+ */
 export async function signIn(email, password) {
-  if (!email || !password) throw new Error("Email and password are required");
-  const cred = await signInWithEmailAndPassword(auth, email, password);
-  const user = cred.user;
-
-  let profile = null;
   try {
-    profile = await getUserProfile(user.uid);
-    if (!profile) profile = await ensureUserProfile(user, "tourist");
-  } catch (err) { console.warn("Could not read/create user profile:", err); }
+    const userCredential = await signInWithEmailAndPassword(auth, email, password);
+    const user = userCredential.user;
 
-  return { user, profile };
-}
+    // Get user profile from Firestore
+    const userDoc = await getDoc(doc(db, 'users', user.uid));
+    const profile = userDoc.exists() ? userDoc.data() : null;
 
-export async function driverSignIn(email, password) {
-  const { user, profile } = await signIn(email, password);
-
-  if (!profile || profile.role !== "driver") {
-    try { await firebaseSignOut(auth); } catch (e) { console.warn("Failed to sign out non-driver user:", e); }
-    throw new Error("This account is not registered as a driver.");
+    return { user, profile };
+  } catch (error) {
+    throw error;
   }
-
-  return { user, profile };
 }
 
-export async function signOut() { await firebaseSignOut(auth); }
+/**
+ * Sign out current user
+ */
+export async function signOutUser() {
+  try {
+    await signOut(auth);
+  } catch (error) {
+    throw error;
+  }
+}
 
-export function getCurrentUser() {
-  return new Promise((resolve) => {
-    const unsub = onAuthStateChanged(auth, (user) => { unsub(); resolve(user); });
-  });
+/**
+ * Send password reset email
+ */
+export async function resetPassword(email) {
+  try {
+    await sendPasswordResetEmail(auth, email);
+    return { success: true };
+  } catch (error) {
+    throw error;
+  }
+}
+
+/**
+ * Get current user profile
+ */
+export async function getUserProfile(uid) {
+  try {
+    const userDoc = await getDoc(doc(db, 'users', uid));
+    return userDoc.exists() ? userDoc.data() : null;
+  } catch (error) {
+    throw error;
+  }
+}
+
+/**
+ * Auth state observer
+ */
+export function onAuthChange(callback) {
+  return onAuthStateChanged(auth, callback);
 }

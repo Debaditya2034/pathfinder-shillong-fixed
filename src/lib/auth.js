@@ -7,6 +7,10 @@ import {
   updateProfile,
   onAuthStateChanged,
   sendEmailVerification,
+  sendPasswordResetEmail,
+  updatePassword,
+  reauthenticateWithCredential,
+  EmailAuthProvider,
 } from "firebase/auth";
 import { doc, setDoc, getDoc } from "firebase/firestore";
 
@@ -90,4 +94,43 @@ export function getCurrentUser() {
   return new Promise((resolve) => {
     const unsub = onAuthStateChanged(auth, (user) => { unsub(); resolve(user); });
   });
+}
+
+/**
+ * Send password reset email
+ */
+export async function resetPassword(email) {
+  if (!email) throw new Error("Email is required");
+  if (!auth) throw new Error("Firebase Auth not initialized");
+  
+  try {
+    await sendPasswordResetEmail(auth, email);
+    return { success: true };
+  } catch (error) {
+    console.error("Password reset error:", error);
+    throw new Error(error.message || "Failed to send password reset email");
+  }
+}
+
+/**
+ * Change user password (requires reauthentication)
+ */
+export async function changePassword(currentPassword, newPassword) {
+  if (!auth?.currentUser) throw new Error("User must be logged in");
+  
+  try {
+    // Reauthenticate user
+    const credential = EmailAuthProvider.credential(
+      auth.currentUser.email,
+      currentPassword
+    );
+    await reauthenticateWithCredential(auth.currentUser, credential);
+    
+    // Update password
+    await updatePassword(auth.currentUser, newPassword);
+    return { success: true };
+  } catch (error) {
+    console.error("Change password error:", error);
+    throw new Error(error.message || "Failed to change password");
+  }
 }

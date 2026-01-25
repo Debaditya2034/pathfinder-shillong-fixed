@@ -34,19 +34,19 @@ const curatedRoutes = [
   {
     id: "cloud-chaser",
     title: "Cloud Chaser",
-    stops: "Shillong â†’ Laitlum â†’ Cherrapunji",
+    stops: "Shillong → Laitlum → Cherrapunji",
     distance: "184 km loop",
   },
   {
     id: "living-roots",
     title: "Living Roots",
-    stops: "Umiam â†’ Nongriat â†’ Mawlynnong",
+    stops: "Umiam → Nongriat → Mawlynnong",
     distance: "212 km",
   },
   {
     id: "market-trails",
     title: "Market Trails",
-    stops: "Police Bazaar â†’ Bara Bazaar â†’ Craft Lane",
+    stops: "Police Bazaar → Bara Bazaar → Craft Lane",
     distance: "18 km",
   },
 ];
@@ -54,7 +54,7 @@ const curatedRoutes = [
 const journeySteps = [
   {
     title: "Map your dream",
-    description: "Pick up to seven stopsâ€”PathFinder calculates road time, breaks, and driver pricing.",
+    description: "Pick up to seven stops—PathFinder calculates road time, breaks, and driver pricing.",
     icon: MapPin,
   },
   {
@@ -69,7 +69,7 @@ const journeySteps = [
   },
   {
     title: "Track & tweak live",
-    description: "Need a detour to a hidden cafÃ©? Update the itinerary without losing pace.",
+    description: "Need a detour to a hidden café? Update the itinerary without losing pace.",
     icon: Clock3,
   },
 ];

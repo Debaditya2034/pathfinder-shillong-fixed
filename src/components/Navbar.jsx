@@ -3,6 +3,7 @@ import { Link, useNavigate } from "react-router-dom";
 import { Menu, X, Mountain, LogOut } from "lucide-react";
 
 import { Button } from "@/components/ui/button";
+import LanguageSwitcher from "@/components/LanguageSwitcher";
 
 export const Navbar = ({ user, onLogout }) => {
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
@@ -75,6 +76,7 @@ export const Navbar = ({ user, onLogout }) => {
             <Link to="/itinerary" className="text-[#e8f6ef] hover:text-[#14c47b] transition-colors" aria-label="Plan Trip">
               Plan Trip
             </Link>
+            <LanguageSwitcher />
             {renderAuthButtons()}
           </div>
 

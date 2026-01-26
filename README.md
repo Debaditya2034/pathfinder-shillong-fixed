@@ -59,6 +59,32 @@ Or manually copy the rules from `firestore.rules` to your Firebase Console under
 
 ### 5. Firestore Indexes
 
+The following composite indexes are required for optimal query performance. Deploy them using:
+
+```bash
+firebase deploy --only firestore:indexes
+```
+
+Or manually create them in Firebase Console under Firestore Database > Indexes:
+
+**Required Indexes:**
+
+1. **bookings collection:**
+   - `userId` (Ascending) + `updatedAt` (Descending)
+   - Used for: Tourist viewing their bookings
+
+2. **bookings collection:**
+   - `driverId` (Ascending) + `status` (Ascending) + `updatedAt` (Descending)
+   - Used for: Driver viewing active bookings (accepted/completed)
+
+3. **bookings collection:**
+   - `status` (Ascending) + `updatedAt` (Descending)
+   - Used for: Fetching pending bookings for driver matching
+
+The indexes file `firestore.indexes.json` is included in the project root for Firebase CLI deployment.
+
+### 5. Firestore Indexes
+
 The following collections will be created automatically:
 - `users` - User profiles with role information
 - `itineraries` - User-created itineraries

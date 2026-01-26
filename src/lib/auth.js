@@ -11,7 +11,7 @@ import { auth, db } from './firebase';
 /**
  * Sign up a new user
  */
-export async function signUp(email, password, role = 'tourist') {
+export async function signUp(email, password, role = 'tourist', placesServed = []) {
   try {
     const userCredential = await createUserWithEmailAndPassword(auth, email, password);
     const user = userCredential.user;
@@ -24,6 +24,16 @@ export async function signUp(email, password, role = 'tourist') {
       createdAt: serverTimestamp(),
       updatedAt: serverTimestamp()
     });
+
+    // If driver, create driver profile with placesServed
+    if (role === 'driver' && placesServed.length > 0) {
+      await setDoc(doc(db, 'driverProfiles', user.uid), {
+        uid: user.uid,
+        placesServed: placesServed,
+        createdAt: serverTimestamp(),
+        updatedAt: serverTimestamp()
+      });
+    }
 
     return { user, role };
   } catch (error) {

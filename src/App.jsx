@@ -5,6 +5,7 @@ import Login from './pages/Login';
 import SignUp from './pages/SignUp';
 import ForgotPassword from './pages/ForgotPassword';
 import Home from './pages/Home';
+import Driver from './pages/Driver';
 import Logout from './pages/Logout';
 
 function App() {
@@ -18,8 +19,16 @@ function App() {
           <Route
             path="/home"
             element={
-              <ProtectedRoute>
+              <ProtectedRoute requiredRole="tourist">
                 <Home />
+              </ProtectedRoute>
+            }
+          />
+          <Route
+            path="/driver"
+            element={
+              <ProtectedRoute requiredRole="driver">
+                <Driver />
               </ProtectedRoute>
             }
           />

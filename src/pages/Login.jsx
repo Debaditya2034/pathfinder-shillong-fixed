@@ -16,8 +16,13 @@ function Login() {
 
     try {
       const { profile } = await signIn(email, password);
-      // Redirect based on role or default to home
-      navigate('/home');
+      
+      // Redirect based on role - ProtectedRoute will handle validation
+      if (profile?.role === 'driver') {
+        navigate('/driver');
+      } else {
+        navigate('/home');
+      }
     } catch (err) {
       setError(err.message || 'Failed to sign in');
     } finally {

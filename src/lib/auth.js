@@ -1,0 +1,135 @@
+import {
+  createUserWithEmailAndPassword,
+  signInWithEmailAndPassword,
+  signOut,
+  sendPasswordResetEmail,
+  onAuthStateChanged,
+  setPersistence,
+  browserSessionPersistence,
+  RecaptchaVerifier,
+  signInWithPhoneNumber
+} from 'firebase/auth';
+import { doc, setDoc, getDoc, serverTimestamp } from 'firebase/firestore';
+import { auth, db } from './firebase';
+
+/**
+ * Sign up a new user
+ */
+export async function signUp(email, password, role = 'tourist', placesServed = [], phoneNumber = '') {
+  try {
+    // Ensure session persistence for new signups too
+    await setPersistence(auth, browserSessionPersistence);
+
+    const userCredential = await createUserWithEmailAndPassword(auth, email, password);
+    const user = userCredential.user;
+
+    // Create user profile in Firestore
+    await setDoc(doc(db, 'users', user.uid), {
+      uid: user.uid,
+      email: user.email,
+      role: role,
+      phoneNumber: phoneNumber,
+      createdAt: serverTimestamp(),
+      updatedAt: serverTimestamp()
+    });
+
+    // If driver, create driver profile with placesServed
+    if (role === 'driver' && placesServed.length > 0) {
+      await setDoc(doc(db, 'driverProfiles', user.uid), {
+        uid: user.uid,
+        placesServed: placesServed,
+        createdAt: serverTimestamp(),
+        updatedAt: serverTimestamp()
+      });
+    }
+
+    return { user, role };
+  } catch (error) {
+    throw error;
+  }
+}
+
+/**
+ * Sign in an existing user
+ */
+export async function signIn(email, password) {
+  try {
+    // Set persistence to SESSION (clears on tab/window close)
+    await setPersistence(auth, browserSessionPersistence);
+
+    const userCredential = await signInWithEmailAndPassword(auth, email, password);
+    const user = userCredential.user;
+
+    // Get user profile from Firestore
+    const userDoc = await getDoc(doc(db, 'users', user.uid));
+    const profile = userDoc.exists() ? userDoc.data() : null;
+
+    return { user, profile };
+  } catch (error) {
+    throw error;
+  }
+}
+
+/**
+ * Sign out current user
+ */
+export async function signOutUser() {
+  try {
+    await signOut(auth);
+  } catch (error) {
+    throw error;
+  }
+}
+
+/**
+ * Send password reset email
+ */
+export async function resetPassword(email) {
+  try {
+    await sendPasswordResetEmail(auth, email);
+    return { success: true };
+  } catch (error) {
+    throw error;
+  }
+}
+
+/**
+ * Get current user profile
+ */
+export async function getUserProfile(uid) {
+  try {
+    const userDoc = await getDoc(doc(db, 'users', uid));
+    return userDoc.exists() ? userDoc.data() : null;
+  } catch (error) {
+    throw error;
+  }
+}
+
+/**
+ * Auth state observer
+ */
+export function onAuthChange(callback) {
+  return onAuthStateChanged(auth, callback);
+}
+
+/**
+ * Initialize Recaptcha
+ */
+export function setupRecaptcha(elementId) {
+  if (!window.recaptchaVerifier) {
+    window.recaptchaVerifier = new RecaptchaVerifier(auth, elementId, {
+      'size': 'normal',
+      'callback': (response) => {
+        // reCAPTCHA solved, allow signInWithPhoneNumber.
+      }
+    });
+  }
+  return window.recaptchaVerifier;
+}
+
+/**
+ * Sign in with phone number
+ */
+export function signInPhone(phoneNumber, appVerifier) {
+  return signInWithPhoneNumber(auth, phoneNumber, appVerifier);
+}

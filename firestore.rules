@@ -1,0 +1,273 @@
+rules_version = '2';
+service cloud.firestore {
+  match /databases/{database}/documents {
+    // Helper function to get user role
+    function getUserRole() {
+      return get(/databases/$(database)/documents/users/$(request.auth.uid)).data.role;
+    }
+    
+    // Users collection
+    match /users/{userId} {
+      // Read: Own profile or admin
+      allow read: if request.auth != null && (request.auth.uid == userId || getUserRole() == 'admin');
+      
+      // Create: Can create own profile on signup
+      allow create: if request.auth != null && 
+        request.auth.uid == userId &&
+        request.resource.data.uid == userId &&
+        request.resource.data.createdAt == request.time &&
+        request.resource.data.updatedAt == request.time;
+      
+      // Update: Can update own profile but role is immutable
+      allow update: if request.auth != null && 
+        request.auth.uid == userId &&
+        request.resource.data.uid == userId &&
+        request.resource.data.role == resource.data.role &&
+        request.resource.data.updatedAt == request.time &&
+        !request.resource.data.diff(resource.data).affectedKeys().hasAny(['createdAt']);
+      
+      // No delete allowed
+      allow delete: if false;
+    }
+    
+    // Driver Profiles collection
+    match /driverProfiles/{profileId} {
+      // Read: Own profile or admin
+      allow read: if request.auth != null && (
+        request.auth.uid == profileId ||
+        getUserRole() == 'admin'
+      );
+      
+      // Create: Driver can create own profile on signup
+      allow create: if request.auth != null && 
+        getUserRole() == 'driver' &&
+        request.auth.uid == profileId &&
+        request.resource.data.uid == profileId &&
+        request.resource.data.placesServed is list &&
+        request.resource.data.placesServed.size() > 0 &&
+        request.resource.data.createdAt == request.time &&
+        request.resource.data.updatedAt == request.time;
+      
+      // Update: Driver can update own profile (e.g., placesServed)
+      allow update: if request.auth != null && 
+        getUserRole() == 'driver' &&
+        request.auth.uid == profileId &&
+        request.resource.data.uid == profileId &&
+        request.resource.data.updatedAt == request.time &&
+        !request.resource.data.diff(resource.data).affectedKeys().hasAny(['createdAt']);
+      
+      // No delete allowed
+      allow delete: if false;
+    }
+    
+    // Itineraries collection
+    match /itineraries/{itineraryId} {
+      // Read: Only own itineraries
+      allow read: if request.auth != null && resource.data.userId == request.auth.uid;
+      
+      // Create: Tourist can create for themselves only
+      allow create: if request.auth != null && 
+        request.resource.data.userId == request.auth.uid &&
+        getUserRole() == 'tourist' &&
+        request.resource.data.places is list &&
+        request.resource.data.places.size() > 0 &&
+        (request.resource.data.specialMessage is string || request.resource.data.specialMessage == null) &&
+        request.resource.data.createdAt == request.time &&
+        request.resource.data.updatedAt == request.time;
+      
+      // Update: Tourist can update own itineraries, only allowed fields
+      allow update: if request.auth != null && 
+        resource.data.userId == request.auth.uid &&
+        getUserRole() == 'tourist' &&
+        request.resource.data.userId == resource.data.userId &&
+        request.resource.data.places is list &&
+        request.resource.data.places.size() > 0 &&
+        (request.resource.data.specialMessage is string || request.resource.data.specialMessage == null) &&
+        request.resource.data.updatedAt == request.time &&
+        request.resource.data.createdAt == resource.data.createdAt &&
+        !request.resource.data.diff(resource.data).affectedKeys().hasAny(['userId', 'createdAt']);
+      
+      // Delete: Tourist can delete own itineraries
+      allow delete: if request.auth != null && 
+        resource.data.userId == request.auth.uid &&
+        getUserRole() == 'tourist';
+    }
+    
+
+    // Driver Status collection
+    // Single doc per driver: driverStatus/{driverId}
+    match /driverStatus/{driverId} {
+      // Read: Driver themselves or Admin (for debugging)
+      allow read: if request.auth != null && (
+        request.auth.uid == driverId || 
+        getUserRole() == 'admin'
+      );
+      
+      // Create: 
+      // - Driver can create their own status
+      // - Tourist/System can create if setting to null (recovery/completion flow if doc missing)
+      allow create: if request.auth != null && (
+        (request.auth.uid == driverId && getUserRole() == 'driver') ||
+        request.resource.data.activeBookingId == null
+      );
+      
+      // Update:
+      // - Driver can update their own status
+      // - Tourist can update status ONLY to release the driver (set activeBookingId = null) when completing a booking
+      allow update: if request.auth != null && (
+        (request.auth.uid == driverId && getUserRole() == 'driver') ||
+        (request.resource.data.activeBookingId == null &&
+         request.resource.data.diff(resource.data).affectedKeys().hasOnly(['activeBookingId', 'updatedAt']))
+      );
+    }
+
+    // Bookings collection
+    match /bookings/{bookingId} {
+      // Read: 
+      // - Tourist can read their own bookings
+      // - Driver can read all (needed for matching eligible bookings)
+      allow read: if request.auth != null && (
+        resource.data.userId == request.auth.uid ||
+        getUserRole() == 'driver'
+      );
+      
+      // Create: Tourist can create bookings for themselves only
+      allow create: if request.auth != null && 
+        getUserRole() == 'tourist' &&
+        request.resource.data.userId == request.auth.uid &&
+        request.resource.data.status == 'pending' &&
+        request.resource.data.systemStatus == 'pending' &&
+        request.resource.data.driverStatus == 'searching' &&
+        request.resource.data.touristStatus == 'active' &&
+        request.resource.data.driverId == null &&
+        request.resource.data.places is list &&
+        request.resource.data.places.size() > 0 &&
+        request.resource.data.declinedBy == [] &&
+        request.resource.data.createdAt == request.time &&
+        request.resource.data.updatedAt == request.time;
+      
+      // Update: Strict field-level control with status transition validation
+      allow update: if request.auth != null && (
+        // Tourist canceling their own pending booking
+        (getUserRole() == 'tourist' &&
+         resource.data.userId == request.auth.uid &&
+         resource.data.status == 'pending' &&
+         request.resource.data.status == 'cancelled' &&
+         request.resource.data.systemStatus == 'cancelled' &&
+         request.resource.data.driverStatus == 'cancelled' &&
+         request.resource.data.touristStatus == 'cancelled' &&
+         request.resource.data.userId == resource.data.userId &&
+         request.resource.data.driverId == resource.data.driverId &&
+         request.resource.data.places == resource.data.places &&
+         request.resource.data.updatedAt == request.time &&
+         request.resource.data.diff(resource.data).affectedKeys().hasOnly(['status', 'systemStatus', 'driverStatus', 'touristStatus', 'updatedAt'])) ||
+        // Driver accepting (pending -> accepted, set driverId)
+        (getUserRole() == 'driver' &&
+         resource.data.status == 'pending' &&
+         resource.data.driverId == null &&
+         request.resource.data.status == 'accepted' &&
+         request.resource.data.systemStatus == 'accepted' &&
+         request.resource.data.driverStatus == 'scheduled' &&
+         request.resource.data.touristStatus == 'ride_scheduled' &&
+         request.resource.data.driverId == request.auth.uid &&
+         request.resource.data.userId == resource.data.userId &&
+         request.resource.data.places == resource.data.places &&
+         request.resource.data.updatedAt == request.time &&
+         request.resource.data.diff(resource.data).affectedKeys().hasOnly(['status', 'systemStatus', 'driverStatus', 'touristStatus', 'driverId', 'updatedAt'])) ||
+        // Driver requesting completion (accepted -> completion_requested)
+        (getUserRole() == 'driver' &&
+         resource.data.driverId == request.auth.uid &&
+         resource.data.status == 'accepted' &&
+         request.resource.data.status == 'completion_requested' &&
+         request.resource.data.systemStatus == 'completion_requested' &&
+         request.resource.data.driverStatus == 'completing' &&
+         request.resource.data.touristStatus == 'action_required' &&
+         request.resource.data.driverId == resource.data.driverId &&
+         request.resource.data.userId == resource.data.userId &&
+         request.resource.data.places == resource.data.places &&
+         request.resource.data.completionRequestedAt == request.time &&
+         request.resource.data.updatedAt == request.time &&
+         request.resource.data.diff(resource.data).affectedKeys().hasOnly(['status', 'systemStatus', 'driverStatus', 'touristStatus', 'completionRequestedAt', 'updatedAt'])) ||
+        // Tourist confirming completion (completion_requested -> completed)
+        (getUserRole() == 'tourist' &&
+         resource.data.userId == request.auth.uid &&
+         resource.data.status == 'completion_requested' &&
+         request.resource.data.status == 'completed' &&
+         request.resource.data.systemStatus == 'completed' &&
+         request.resource.data.driverStatus == 'completed' &&
+         request.resource.data.touristStatus == 'completed' &&
+         request.resource.data.userId == resource.data.userId &&
+         request.resource.data.driverId == resource.data.driverId &&
+         request.resource.data.places == resource.data.places &&
+         request.resource.data.completedAt == request.time &&
+         request.resource.data.updatedAt == request.time &&
+         request.resource.data.diff(resource.data).affectedKeys().hasOnly(['status', 'systemStatus', 'driverStatus', 'touristStatus', 'completedAt', 'updatedAt'])) ||
+        // Tourist disputing completion (completion_requested -> disputed)
+        (getUserRole() == 'tourist' &&
+         resource.data.userId == request.auth.uid &&
+         resource.data.status == 'completion_requested' &&
+         request.resource.data.status == 'disputed' &&
+         request.resource.data.systemStatus == 'disputed' &&
+         request.resource.data.driverStatus == 'dispute_active' &&
+         request.resource.data.touristStatus == 'dispute_active' &&
+         request.resource.data.userId == resource.data.userId &&
+         request.resource.data.driverId == resource.data.driverId &&
+         request.resource.data.places == resource.data.places &&
+         request.resource.data.completionDispute is map &&
+         request.resource.data.completionDispute.reason is string &&
+         (request.resource.data.completionDispute.details is string || request.resource.data.completionDispute.details == null) &&
+         request.resource.data.completionDispute.createdAt == request.time &&
+         request.resource.data.updatedAt == request.time &&
+         request.resource.data.diff(resource.data).affectedKeys().hasOnly(['status', 'systemStatus', 'driverStatus', 'touristStatus', 'completionDispute', 'updatedAt'])) ||
+        // Driver declining (add to declinedBy array)
+        // Note: Firestore rules can't perfectly validate arrayUnion operations
+        // Client-side uses arrayUnion which is safe. Rules allow updates that:
+        // - Keep booking as pending
+        // - Don't change userId, places, driverId, status
+        // - Only modify declinedBy array and updatedAt
+        (getUserRole() == 'driver' &&
+         resource.data.status == 'pending' &&
+         request.resource.data.status == 'pending' &&
+         request.resource.data.userId == resource.data.userId &&
+         request.resource.data.places == resource.data.places &&
+         request.resource.data.driverId == resource.data.driverId &&
+         request.resource.data.declinedBy is list &&
+         request.resource.data.updatedAt == request.time &&
+         !request.resource.data.diff(resource.data).affectedKeys().hasAny(['status', 'systemStatus', 'driverStatus', 'touristStatus', 'userId', 'places', 'driverId', 'createdAt']))
+      );
+      
+      // No delete allowed
+      allow delete: if false;
+    }
+
+    // Support Tickets collection
+    match /supportTickets/{ticketId} {
+      // Read:
+      // - Creator (tourist) can read own tickets
+      // - Assigned driver can read tickets (optional requirement)
+      // - Admin can read all
+      allow read: if request.auth != null && (
+        resource.data.userId == request.auth.uid ||
+        resource.data.driverId == request.auth.uid ||
+        getUserRole() == 'admin'
+      );
+
+      // Create:
+      // - Tourist can create ticket
+      // - Must link to a booking (implied valid bookingId)
+      // - userId must specific auth uid
+      // - Initial status must be 'open'
+      allow create: if request.auth != null &&
+        request.resource.data.userId == request.auth.uid &&
+        request.resource.data.status == 'open' &&
+        request.resource.data.createdAt == request.time &&
+        request.resource.data.updatedAt == request.time;
+      
+      // Update: Only admin can update (e.g. change status)
+      allow update: if request.auth != null && getUserRole() == 'admin';
+      
+      // Delete: No one
+      allow delete: if false;
+    }
+  }
+}
